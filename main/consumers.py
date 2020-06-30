@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 import random
 
-
+action = False
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -65,11 +65,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from room group
     async def chat_message(self, event):
-        #message = event['message']
+        message = event['message']
         action = event['action']
+        state = event['state']
 
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
+            'message': message,
+            "username": event["username"],
             'action': action,
         }))
