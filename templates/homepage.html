@@ -57,21 +57,34 @@
 <section class="engine"><a href="https://mobirise.info/j">website templates</a></section><section class="header1 cid-s2NgGZj7Mi mbr-fullscreen" id="header16-8">
 
     
-
+{% if form.errors %}
+      <b>Did you enter a room and username?</b>
+{% endif %}
     
 
     <div class="container">
         <div class="row justify-content-md-center">
             <div class="col-md-10 align-center">
                 <h1 class="mbr-section-title mbr-bold pb-3 mbr-fonts-style display-1">&nbsp;</h1>
-                
+
                 <p class="mbr-text pb-3 mbr-fonts-style display-5"></p>
 
-                <div class="mbr-section-btn">
 
-                    <a type="submit" id= "CreateRoom" class="btn btn-lg btn-black display-4" href="{% url 'main:redirect_to_room'  %}" ><h1 style="font-size:25px ">Create Room</h1></a></div>
 
-            </div>
+                <form method="post"   action = "{% url 'main:redirect_to_room' %}" >
+
+                    {% csrf_token %}
+                    {{form.username.}}
+
+
+                <input type="submit" value="Createroom" class="btn btn-lg btn-black display-4">
+
+                </form>
+
+
+
+
+
         </div>
     </div>
 
