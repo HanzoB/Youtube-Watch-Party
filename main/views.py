@@ -1,10 +1,10 @@
 import requests
 from django.shortcuts import render, redirect
-from .models import Gen_room
 from django.http import HttpResponse
 from django.urls import reverse
-from django.db import models
 import uuid
+import random
+
 
 
 
@@ -12,8 +12,9 @@ import uuid
 def room(request,room):
 
     Room_ID = request.get_full_path().split("m/")[1]
-    context = {'room_id': Room_ID}
+    context = {'room_name': Room_ID, "username": request.user.username}
     return render(request, 'index.html', context)
+
 
 
 def homepage(request):

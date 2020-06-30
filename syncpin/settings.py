@@ -72,7 +72,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'syncpin.wsgi.application'
 ASGI_APPLICATION = 'syncpin.routing.application'
-
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -129,4 +136,4 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, "assets")
 
-YOUTUBE_DATA_API_KEY = "AIzaSyAlMwhpJfKl7yQx_PlztAoPr08QUehPNbQ"
+YOUTUBE_API_KEY = ""

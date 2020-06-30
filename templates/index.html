@@ -17,38 +17,46 @@
       </style>
    </head>
    <body>
-      <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-         <a class="navbar-brand" href="#">SYNCPIN</a>
-         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-         <span class="navbar-toggler-icon"></span>
-         </button>
-         <!--
-            <div class="collapse navbar-collapse" id="collapsibleNavbar">
-              <ul class="navbar-nav">
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Link</a>
-                </li>
-              </ul>
-            </div>
-            -->
-         <ul class="navbar-nav ml-auto">
-            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-            <form  class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+         <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+         <form  class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                <div class="input-group">
-                  <input id = "searchbox"   type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                  <input id = "searchbox"   type="text" class="form-control bg-light border-0 small" placeholder="Youtube Url" aria-label="Search" aria-describedby="basic-addon2">
                   <div class="input-group-append">
-                     <button   type="button" id= "loadvideo"  class="btn btn-primary">Load Youtube Url</button>
+                     <button   type="button" id= "loadvideo"  class="btn btn-primary">Load Video</button>
                   </div>
                </div>
             </form>
+
+         <ul class="navbar-nav ml-auto">
+            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+             <button type="button" id="invite-button" title = "Invite Friends" class="btn btn-outline-primary btn-sm"><svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-person-plus-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+  <path fill-rule="evenodd" d="M13 7.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0v-2z"/>
+</svg></button>
+             <button type="button" id="play-button" title = "Play" class="btn btn-outline-primary btn-sm"><svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-play-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+</svg></button>
+             <button type="button" id="pause-button" title = "Pause"  class="btn btn-outline-secondary btn-sm"><svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-pause-fill" fill="orange" xmlns="http://www.w3.org/2000/svg">
+  <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/>
+</svg></button>
+             <button type="button" id="stop-button" title = "Stop"  class="btn btn-outline-secondary btn-sm"><svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-stop-fill" fill="red" xmlns="http://www.w3.org/2000/svg">
+  <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z"/>
+</svg></button>
+             <button type="button" id="next-button"title = "Next Video"  class="btn btn-outline-success btn-sm"><svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M8.146 4.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.793 8 8.146 5.354a.5.5 0 0 1 0-.708z"/>
+  <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5H11a.5.5 0 0 1 0 1H4.5A.5.5 0 0 1 4 8z"/>
+</svg></button>
+             <button type="button" id="sync-button" title = "Sync"   class="btn btn-outline-danger btn-sm"><svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-repeat" fill="pink" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M2.854 7.146a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L2.5 8.207l1.646 1.647a.5.5 0 0 0 .708-.708l-2-2zm13-1a.5.5 0 0 0-.708 0L13.5 7.793l-1.646-1.647a.5.5 0 0 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0 0-.708z"/>
+  <path fill-rule="evenodd" d="M8 3a4.995 4.995 0 0 0-4.192 2.273.5.5 0 0 1-.837-.546A6 6 0 0 1 14 8a.5.5 0 0 1-1.001 0 5 5 0 0 0-5-5zM2.5 7.5A.5.5 0 0 1 3 8a5 5 0 0 0 9.192 2.727.5.5 0 1 1 .837.546A6 6 0 0 1 2 8a.5.5 0 0 1 .501-.5z"/>
+</svg></button>
          </ul>
       </nav>
+
+
+
+
+
 
       <div class="container-fluid" style="margin-top:30px">
       <div class="row">
@@ -74,16 +82,6 @@
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                 <div  id="chat-log"   class="page-content page-container direct-chat-messages">
-
-                            <div    class="direct-chat-msg">
-                                <div class="direct-chat-info clearfix"> <span class="direct-chat-name pull-left">Timona Siera</span> <span class="direct-chat-timestamp pull-right">23 Jan 2:00 pm</span> </div> <img class="direct-chat-img" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="message user image">
-                                <div class="direct-chat-text"> For what reason would it be advisable for me to think about business content? </div>
-                            </div>
-
-                           <div class="direct-chat-msg right">
-                                <div class="direct-chat-info clearfix"> <span class="direct-chat-name pull-right">Sarah Bullock</span> <span class="direct-chat-timestamp pull-left">23 Jan 2:05 pm</span> </div> <img class="direct-chat-img" src="https://img.icons8.com/office/36/000000/person-female.png" alt="message user image">
-                                <div class="direct-chat-text"> Thank you for your believe in our supports </div>
-                            </div>
 
 
 
@@ -134,7 +132,7 @@
           player = new YT.Player('player', {
               height: '390',
               width: '640',
-              videoId: '0Bmhjf0rKe8',
+              videoId: 'ksaQ3HOCEPc',
               playerVars: {
                   'autoplay': 0,
                   'controls': 0
@@ -161,8 +159,11 @@
       function onPlayerStateChange(event) {
           if (event.data == YT.PlayerState.ENDED) {
               alert('done');
-
           }
+          if (event.data == YT.PlayerState.PAUSED) {
+              alert('paused');
+          }
+
       }
 
       $("#loadvideo").on("click", function() {
@@ -172,7 +173,7 @@
       });
 
 
-
+//Parsing the video ID from youtube URL
       function YouTubeGetID(url){
          var ID = '';
          url = url.toString().replace(/(>|<)/gi,'').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
@@ -186,8 +187,45 @@
          return ID;
       }
 
+//Syncing
+      document.querySelector('#play-button').onclick = function() {
+            player.playVideo()
+            chatSocket.send(JSON.stringify({
+                'action': "play"
+            }));
+
+            messageInputDom.value = '';
+            };
+
+      document.querySelector('#pause-button').onclick = function() {
+         player.pauseVideo()
+            chatSocket.send(JSON.stringify({
+                'action': "pause"
+            }));
+
+            messageInputDom.value = '';
+            };
+
+
+      document.querySelector('#stop-button').onclick = function() {
+         player.stopVideo()
+              };
+
+      document.querySelector('#sync-button').onclick = function() {
+         player.stopVideo()
+              };
+
+
 
    </script>
+
+
+
+
+
+
+
+
 
 
 <!-- chat script -->
@@ -196,24 +234,37 @@
             'ws://'
             + window.location.host
             + '/ws/room/'
-            + '{{ room_id }}'
+            + '{{ room_name }}'
         );
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
+            if (data.message){
             document.querySelector('#chat-log').innerHTML +=
-            '<div  class="direct-chat-msg">' +
+            '<div  class="direct-chat-msg left">' +
             '<div class="direct-chat-info clearfix">' +
-            '<span class="direct-chat-name pull-left">Timona Siera</span>' +
-            '<span class="direct-chat-timestamp pull-right">23 Jan 2:00 pm</span>'  +
+            '<span class="direct-chat-name pull-left"><b>' + data.username + '</b></span>' +
+            '<span class="direct-chat-timestamp pull-right"> </span>'  +
             '</div>' +
             '<img class="direct-chat-img" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="message user image">'  +
             '<div class="direct-chat-text">' + data.message + '</div>' +
             '</div>'
             updateScroll()
+           }else{
+           if (data.action === 'play'){
+           player.playVideo()
+           };
+           if (data.action === 'pause'){
+           player.pauseVideo()
+           };
 
 
-        };
+};
+        chatSocket.onclose = function(e) {
+  console.log("WebSocket is closed now.");
+};
+
+
 
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
@@ -238,7 +289,8 @@
          function updateScroll(){
             var element = document.getElementById("chat-log");
             element.scrollTop = element.scrollHeight;
-}
+};
+};
 
 </script>
 
