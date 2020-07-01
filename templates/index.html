@@ -28,6 +28,9 @@
       <div class="col-md-8 embed-responsive embed-responsive-16by9">
          <div id="player"></div>
           <nav  id="player-controls" class="navbar-fixed-top navbar-expand-sm bg-dark navbar-dark">
+              <div class="slidecontainer">
+  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+</div>
   <ul class="navbar-nav">
 
 
@@ -185,13 +188,6 @@
 
          }
 
-         $("#loadvideo").on("click", function() {
-             url = $("#searchbox").val().match(/(\?|&)v=([^&#]+)/)
-             video_id = YouTubeGetID(url)
-             player.loadVideoById(video_id, 0, "default");
-         });
-
-
          //Parsing the video ID from youtube URL
          function YouTubeGetID(url){
             var ID = '';
@@ -205,24 +201,32 @@
             }
             return ID;
          }
+          $("#loadvideo").on("click", function() {
+             url = $("#searchbox").val().match(/(\?|&)v=([^&#]+)/)
+             video_id = YouTubeGetID(url)
+             player.loadVideoById(video_id, 0, "default");
+             player.stopVideo()
+             chatSocket.send(JSON.stringify({
+                   'action': "load_video",
+                   'data': video_id
+               }));
+         });
 
          //Syncing
          document.querySelector('#play-button').onclick = function() {
                player.playVideo()
                chatSocket.send(JSON.stringify({
-                   'action': "play"
+                   'action': "play",
+                   'data': ""
                }));
-
-               messageInputDom.value = '';
                };
 
          document.querySelector('#pause-button').onclick = function() {
             player.pauseVideo()
                chatSocket.send(JSON.stringify({
-                   'action': "pause"
+                   'action': "pause",
+                   'data': ""
                }));
-
-               messageInputDom.value = '';
                };
 
 
@@ -265,6 +269,10 @@
             };
             if (data.action === 'pause'){
             player.pauseVideo()
+            };
+            if (data.action === 'load_video'){
+                   player.loadVideoById(data.data, 0, "default")
+                   player.seekTo(0,"false")
             };
 
 
@@ -324,6 +332,43 @@ position: absolute;
 
       </style>
 
+<!-- Player slider -->
+      <style>
+          .slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+      </style>
 
 
       <style>
