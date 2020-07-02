@@ -5,5 +5,6 @@ from . import consumers
 
 websocket_urlpatterns = [
     path('ws/room/<uuid:room>', consumers.ChatConsumer),
-    
+
+
 ]

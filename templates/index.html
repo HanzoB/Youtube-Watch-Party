@@ -263,6 +263,18 @@
              '<div class="direct-chat-text">' + data.message + '</div>' +
              '</div>'
              updateScroll()
+             if (data){
+             document.querySelector('#chat-log').innerHTML +=
+             '<div  class="direct-chat-msg left">' +
+             '<div class="direct-chat-info clearfix">' +
+             '<span class="direct-chat-name pull-left"><b>' + data.new_user + '</b></span>' +
+             '<span class="direct-chat-timestamp pull-right"> </span>'  +
+             '</div>' +
+             '<img class="direct-chat-img" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="message user image">'  +
+             '<div class="direct-chat-text">' + data.new_user + '</div>' +
+             '</div>'
+             updateScroll()
+             }
             }else{
             if (data.action === 'play'){
             player.playVideo()
