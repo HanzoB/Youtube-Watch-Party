@@ -57,14 +57,6 @@
 
 <section class="engine"><a href="https://mobirise.info/j">website templates</a></section><section class="header1 cid-s2NgGZj7Mi mbr-fullscreen" id="header16-8">
 
-    
-{% if form.errors %}
-      <b>Did you enter a room and username?</b>
-{% endif %}
-    
-
-
-{% block content %}
     <div class="container">
         <div class="row justify-content-md-center">
             <div class="col-md-10 align-center">
@@ -74,17 +66,15 @@
 
 
 
-                <form method="post"   action = "{% url 'main:redirect_to_room' %}" >
-
-                    {% csrf_token %}
-                    {{form.username.}}
 
 
-                <input type="submit" value="Createroom" class="btn btn-lg btn-black display-4">
 
-                </form>
 
-{% endblock %}
+
+                <a type="submit"  href="{% url 'main:redirect_to_room' %}"  class="btn btn-lg btn-black display-4">Create_Room<a>
+
+
+
 
 
 
@@ -107,8 +97,3 @@
   
 </body>
 </html>
-
-<script>
-
-
-</script>

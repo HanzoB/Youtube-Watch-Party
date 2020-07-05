@@ -105,7 +105,7 @@
                   </div>
                   <div class="card-footer">
                      <div class="input-group">
-                        <input id = "chat-message-input" type="text" name="message" placeholder="Type Message ..." class="form-control">
+                        <input id = "chat-message-input" type="text" name="message" placeholder="{{ username }} ..." class="form-control">
                         <span id = "chat-message-submit" class="input-group-btn"> <button id = "chat-message-submit"  value="Send" type="button" class="btn btn-warning btn-flat">Send</button>
                         </span>
                      </div>
@@ -157,6 +157,7 @@
                  videoId: 'ksaQ3HOCEPc',
                  playerVars: {
                      'autoplay': 0,
+                     'rel' : 0,
                      'controls': 0
                  },
                  events: {
@@ -165,12 +166,14 @@
                  }
              });
 
+
          }
 
          var playerReady = false;
          // 4. The API will call this function when the video player is ready.
          function onPlayerReady(event) {
              playerReady = true;
+
 
          }
 
@@ -216,16 +219,14 @@
          document.querySelector('#play-button').onclick = function() {
                player.playVideo()
                chatSocket.send(JSON.stringify({
-                   'action': "play",
-                   'data': ""
+                   'action': "play"
                }));
                };
 
          document.querySelector('#pause-button').onclick = function() {
             player.pauseVideo()
                chatSocket.send(JSON.stringify({
-                   'action': "pause",
-                   'data': ""
+                   'action': "pause"
                }));
                };
 
@@ -250,6 +251,7 @@
              + '{{ room_name }}'
          );
 
+                  data =
          chatSocket.onmessage = function(e) {
              const data = JSON.parse(e.data);
              if (data.message){
@@ -263,18 +265,15 @@
              '<div class="direct-chat-text">' + data.message + '</div>' +
              '</div>'
              updateScroll()
-             if (data){
+             }
+             if (data.new_user){
              document.querySelector('#chat-log').innerHTML +=
              '<div  class="direct-chat-msg left">' +
              '<div class="direct-chat-info clearfix">' +
-             '<span class="direct-chat-name pull-left"><b>' + data.new_user + '</b></span>' +
-             '<span class="direct-chat-timestamp pull-right"> </span>'  +
-             '</div>' +
-             '<img class="direct-chat-img" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="message user image">'  +
-             '<div class="direct-chat-text">' + data.new_user + '</div>' +
+             '<div class="direct-chat-text">' + data.new_user + ' joined the room.' + '</div>' +
              '</div>'
              updateScroll()
-             }
+
             }else{
             if (data.action === 'play'){
             player.playVideo()
@@ -285,6 +284,15 @@
             if (data.action === 'load_video'){
                    player.loadVideoById(data.data, 0, "default")
                    player.seekTo(0,"false")
+            };
+           if (data.current_video){
+           setTimeout(load_video, 700)
+           function load_video(){
+
+                   player.loadVideoById(data.current_video, 0, "default")
+                   player.seekTo(0,"false")
+                   }
+
             };
 
 

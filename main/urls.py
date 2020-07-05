@@ -21,7 +21,7 @@ app_name = "main"
 
 urlpatterns = [
     path("", views.homepage, name="homepage"),
-    path("room/<uuid:room>", views.room, name="room"),
+    path("room/<uuid:room>", views.room, name="room",),
     path("room", views.redirect_to_room, name="redirect_to_room"),
 
 

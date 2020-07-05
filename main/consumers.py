@@ -6,24 +6,32 @@ import random
 #{roomid:{'host':'first user in room';,room_users:[],'current_video': '' ,playlist:[]}}
 rooms = {}
 
+
 class Room:
 
     def __init__(self):
         self.room_id = ''
         self.room_host = ''
         self.room_users = []
-        self.curr_video = ''
+        self.current_video = ''
         self.playlist = []
+
+    def curr_video(self, video):
+        self.current_video = video
+        print("this is curr_video" + video)
 
     def create_room(self, room_id):
         self.room_id = room_id
 
     def add_user(self, user):
-        self.room_users += [user]
+        self.room_users.append(user)
 
     def remove_user(self, user):
-        self.room_users -= [user]
-        if len(room_users) == 0
+        self.room_users.remove(user)
+
+    def is_empty(self):
+        if len(self.room_users) == 0:
+            return True
 
     def room_host(self, host):
         if self.room_host == '':
@@ -32,15 +40,13 @@ class Room:
             return "Host exists"
 
     def add_to_playlist(self, video_id):
-        self.playlist += [video_id]
+        self.playlist.append(video_id)
 
     def remove_from_playlist(self, video_id):
-        self.playlist -= [video_id]
+        self.playlist.remove(video_id)
 
     def room_info(self):
         return "Room_ID: %s \n Room_host: %s \n room_users: %s "%(self.room_id, self.room_host, self.room_users)
-
-
 
 
 
@@ -65,9 +71,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if username not in room.room_users:
             room.add_user(username)
         print(room.room_users)
-
-
-
         # Join room group
         await self.channel_layer.group_add(
 
@@ -76,8 +79,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
-
-
+        # Send message to room group
+        username = self.user.username
+        await self.send(text_data=json.dumps(room.__dict__))
+        print(json.dumps(room.__dict__))
 
 
 
@@ -86,15 +91,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name,
-
         )
+        room = rooms[self.room_group_name]
+        room.remove_user(self.user.username)
+
+
+        print(room.room_users)
+        print(rooms)
+
+
+
+
 
     # Receive message from WebSocket
     async def receive(self, text_data):
         username = self.user.username
+        room = rooms[self.room_group_name]
         text_data_json = json.loads(text_data)
         if 'message' in text_data_json:
-            print("eceive(self, text_data)")
             message = text_data_json['message']
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -106,33 +120,43 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
         elif 'action' in text_data_json:
             action = text_data_json['action']
-            data = text_data_json['data']
+            try:
+                data = text_data_json['data']
+                room.curr_video(data)
+
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'action',
+                        'action': action,
+                        'data': data,
+
+                    }
+                )
+            except:
+                print("No data")
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'action',
+                        'action': action,
+
+                    }
+                )
 
             # Send message to room group
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': 'action',
-                    'action': action,
-                    'data': data,
 
-                }
-            )
-        elif 'new_user' in text_data_json:
-            new_user = text_data_json['new_user']
-            # Send message to room group
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': 'notification',
-                    'new_user': new_user,
-                }
-            )
+
+
+
+
+
 
 
     # Receive message from room group
     async def chat(self, event):
         message = event['message']
+        print(message)
         await self.send(text_data=json.dumps({
             'message': message,
             "username": event["username"],
@@ -141,15 +165,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def action(self, event):
         action = event['action']
-        data = event['data']
+        try:
+            data = event['data']
+            await self.send(text_data=json.dumps({
+                'action': action,
+                'data': data,
+            }))
+        except:
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'action': action,
-            'data': data,
+             await self.send(text_data=json.dumps({
+                'action': action,
         }))
 
     async def notification(self, event):
-        print("called")
         new_user = event['new_user']
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
