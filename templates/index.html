@@ -27,7 +27,7 @@
       <div class="row">
       <div class="col-md-8 embed-responsive embed-responsive-16by9">
          <div id="player"></div>
-          <nav  id="player-controls" class="navbar-fixed-top navbar-expand-sm bg-dark navbar-dark">
+         <nav  id="player-controls" class="navbar-fixed-top navbar-expand-sm bg-dark navbar-dark">
               <div class="slidecontainer">
   <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
 </div>
@@ -41,16 +41,7 @@
                </svg>
             </button>
             </ul>
-    <ul class="navbar-nav">
-            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-            <button type="button" id="invite-button" title = "Invite Friends" class="btn btn-outline-primary btn-sm">
-               <svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-person-plus-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
-                  <path fill-rule="evenodd" d="M13 7.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0v-2z"/>
-               </svg>
 
-            </button>
-        </ul>
     <ul class="navbar-nav">
             <button type="button" id="pause-button" title = "Pause"  class="btn btn-outline-secondary btn-sm">
                <svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-pause-fill" fill="orange" xmlns="http://www.w3.org/2000/svg">
@@ -73,18 +64,10 @@
                </svg>
             </button>
         </ul>
-    <ul class="navbar-nav">
-            <button type="button" id="sync-button" title = "Sync"   class="btn btn-outline-danger btn-sm">
-               <svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-repeat" fill="pink" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" d="M2.854 7.146a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L2.5 8.207l1.646 1.647a.5.5 0 0 0 .708-.708l-2-2zm13-1a.5.5 0 0 0-.708 0L13.5 7.793l-1.646-1.647a.5.5 0 0 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0 0-.708z"/>
-                  <path fill-rule="evenodd" d="M8 3a4.995 4.995 0 0 0-4.192 2.273.5.5 0 0 1-.837-.546A6 6 0 0 1 14 8a.5.5 0 0 1-1.001 0 5 5 0 0 0-5-5zM2.5 7.5A.5.5 0 0 1 3 8a5 5 0 0 0 9.192 2.727.5.5 0 1 1 .837.546A6 6 0 0 1 2 8a.5.5 0 0 1 .501-.5z"/>
-               </svg>
-            </button>
-
-         </ul>
+    
 
   </ul>
-</nav>
+</nav>-->
       </div>
       <div class="col-md-4">
       <div class="card ">
@@ -96,6 +79,25 @@
                <li class="nav-item">
                   <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Playlist</a>
                </li>
+               <li class="navbar-nav">
+            
+                <button type="button" id="invite-button" title = "Invite Friends" class="btn btn-outline-primary btn-sm">
+                   <svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-person-plus-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+                      <path fill-rule="evenodd" d="M13 7.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0v-2z"/>
+                   </svg>
+    
+                </button>
+            </li>
+               <li class="nav-item">
+                <button type="button" id="sync-button" title = "Sync"   class="btn btn-outline-danger btn-sm">
+                   <svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-repeat" fill="pink" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" d="M2.854 7.146a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L2.5 8.207l1.646 1.647a.5.5 0 0 0 .708-.708l-2-2zm13-1a.5.5 0 0 0-.708 0L13.5 7.793l-1.646-1.647a.5.5 0 0 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0 0-.708z"/>
+                      <path fill-rule="evenodd" d="M8 3a4.995 4.995 0 0 0-4.192 2.273.5.5 0 0 1-.837-.546A6 6 0 0 1 14 8a.5.5 0 0 1-1.001 0 5 5 0 0 0-5-5zM2.5 7.5A.5.5 0 0 1 3 8a5 5 0 0 0 9.192 2.727.5.5 0 1 1 .837.546A6 6 0 0 1 2 8a.5.5 0 0 1 .501-.5z"/>
+                   </svg>
+                </button>
+    
+             </li>
             </ul>
          </div>
          <div  class="card-body">
@@ -113,6 +115,12 @@
                </div>
                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                   <div class="page-content page-container direct-chat-messages">
+                    <div class="card-body">
+                        <h5 class="card-title">what?</h5>
+                        <p class="card-text">Giver</p>
+                        <a href="#" class="btn btn-primary">Insert in deathknife</a>
+                      </div>
+    
                   </div>
                </div>
             </div>
@@ -149,16 +157,17 @@
          // 3. This function creates an <iframe> (and YouTube player)
          //    after the API code downloads.
          var player;
+         var load_id;
+         var start_play;
 
          function onYouTubeIframeAPIReady() {
              player = new YT.Player('player', {
                  height: '390',
                  width: '640',
-                 videoId: 'ksaQ3HOCEPc',
+                 videoId: "VwA5JjCAhG4",
                  playerVars: {
-                     'autoplay': 0,
-                     'rel' : 0,
-                     'controls': 0
+                     'autoplay': 1,
+                     'controls': 1
                  },
                  events: {
                      'onReady': onPlayerReady,
@@ -173,7 +182,10 @@
          // 4. The API will call this function when the video player is ready.
          function onPlayerReady(event) {
              playerReady = true;
-
+             player.loadVideoById(load_id)
+             
+             
+             
 
          }
 
@@ -183,11 +195,19 @@
          //    the player should play for six seconds and then stop.
          function onPlayerStateChange(event) {
              if (event.data == YT.PlayerState.ENDED) {
-                 alert('done');
+                 
              }
              if (event.data == YT.PlayerState.PAUSED) {
-                 //alert('paused');
+                //chatSocket.send(JSON.stringify({
+                 //  'action': "pause"
+             //  }));
+
              }
+             if (event.data == YT.PlayerState.PLAYING) {
+                
+             }
+            
+            
 
          }
 
@@ -207,6 +227,7 @@
           $("#loadvideo").on("click", function() {
              url = $("#searchbox").val().match(/(\?|&)v=([^&#]+)/)
              video_id = YouTubeGetID(url)
+             document.querySelector('#searchbox').value = ""
              player.loadVideoById(video_id, 0, "default");
              player.stopVideo()
              chatSocket.send(JSON.stringify({
@@ -219,21 +240,21 @@
          document.querySelector('#play-button').onclick = function() {
                player.playVideo()
                chatSocket.send(JSON.stringify({
-                   'action': "play"
+                   'action': "play",
+                   'data': player.getCurrentTime()
+
                }));
+
                };
 
          document.querySelector('#pause-button').onclick = function() {
             player.pauseVideo()
                chatSocket.send(JSON.stringify({
-                   'action': "pause"
+                   'action': "pause",
+                   'data': player.getCurrentTime()
                }));
                };
 
-
-         document.querySelector('#stop-button').onclick = function() {
-            player.stopVideo()
-                 };
 
          document.querySelector('#sync-button').onclick = function() {
             player.stopVideo()
@@ -274,27 +295,29 @@
              '</div>'
              updateScroll()
 
-            }else{
-            if (data.action === 'play'){
-            player.playVideo()
-            };
+            }
             if (data.action === 'pause'){
             player.pauseVideo()
             };
             if (data.action === 'load_video'){
-                   player.loadVideoById(data.data, 0, "default")
+                   player.loadVideoById(data.data, 1, "default")
                    player.seekTo(0,"false")
             };
            if (data.current_video){
-           setTimeout(load_video, 700)
-           function load_video(){
+               if (playerReady){
+                player.loadVideoById(data.current_video, 1, "default")
+                player.playVideo()
+               }else{
+                   load_id = data.current_video
 
-                   player.loadVideoById(data.current_video, 0, "default")
-                   player.seekTo(0,"false")
-                   }
-
+               }
             };
-
+            if (data.action === 'play'){
+                player.playVideo()
+                console.log(data.current_time)
+                player.seekTo(data.current_time)
+                
+            };
 
          };
          chatSocket.onclose = function(e) {
@@ -327,9 +350,13 @@
              var element = document.getElementById("chat-log");
              element.scrollTop = element.scrollHeight;
          };
-         };
 
+          
       </script>
+
+
+
+
 
 
       <!-- Player -->
@@ -351,6 +378,10 @@ position: absolute;
 }
 
       </style>
+
+
+
+
 
 <!-- Player slider -->
       <style>
