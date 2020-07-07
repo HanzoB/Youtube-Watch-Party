@@ -27,6 +27,7 @@
       <div class="row">
       <div class="col-md-8 embed-responsive embed-responsive-16by9">
          <div id="player"></div>
+        </div>
          <nav  id="player-controls" class="navbar-fixed-top navbar-expand-sm bg-dark navbar-dark">
               <div class="slidecontainer">
   <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
@@ -198,12 +199,24 @@
                  
              }
              if (event.data == YT.PlayerState.PAUSED) {
-                //chatSocket.send(JSON.stringify({
-                 //  'action': "pause"
-             //  }));
-
+                chatSocket.send(JSON.stringify({
+                'action': "pause",
+               }));
              }
              if (event.data == YT.PlayerState.PLAYING) {
+                chatSocket.send(JSON.stringify({
+                'action': "play",
+               }));
+               function my_current_time(){
+                   player.getCurrentTime()
+
+                   chatSocket.send(JSON.stringify({
+                'player_time': player.getCurrentTime(),
+               }));
+
+               }
+               setInterval(my_current_time, 500)
+            
                 
              }
             
@@ -297,7 +310,14 @@
 
             }
             if (data.action === 'pause'){
-            player.pauseVideo()
+            if(data.current_time){
+                    player.pauseVideo()
+                    console.log(data.current_time)
+                    player.seekTo(data.current_time)
+                }else{
+
+                    player.pauseVideo()                         
+                }
             };
             if (data.action === 'load_video'){
                    player.loadVideoById(data.data, 1, "default")
@@ -313,10 +333,14 @@
                }
             };
             if (data.action === 'play'){
-                player.playVideo()
-                console.log(data.current_time)
-                player.seekTo(data.current_time)
-                
+                if(data.current_time){
+                    player.playVideo()
+                    console.log(data.current_time)
+                    player.seekTo(data.current_time)
+                }else{
+
+                    player.playVideo()                          
+                }
             };
 
          };

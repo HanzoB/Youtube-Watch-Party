@@ -18,7 +18,7 @@ class Room:
 
     def curr_video(self, video):
         self.current_video = video
-        print("this is curr_video" + video)
+        print("Current Video: " + video)
 
     def create_room(self, room_id):
         self.room_id = room_id
@@ -181,12 +181,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print("second" )
         print(action + " try:")
         if action == "play" or action == "pause":
+            if 'current_time' in event:
                 print("is this even tried?")
                 data = event['current_time']
                 await self.send(text_data=json.dumps({
                 'action': action,
                 'current_time': data,
             }))
+            else:
+                await self.send(text_data=json.dumps({
+                'action': action,
+            })) 
+
         elif action == "load_video":
                 data = event['data']
                 print("second3" + data)
@@ -196,7 +202,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }))
         else:
                 # Send message to WebSocket
-                print("why is this called?")
                 await self.send(text_data=json.dumps({
                 'action': action,
             }))            
