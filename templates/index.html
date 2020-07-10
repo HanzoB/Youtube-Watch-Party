@@ -159,7 +159,10 @@
          //    after the API code downloads.
          var player;
          var load_id;
-         var start_play;
+         var IsPlaying;
+         let UserName = "";
+         let expectedRunTime = 0.0;
+         let videoLastStartTime = 0.0;  
 
          function onYouTubeIframeAPIReady() {
              player = new YT.Player('player', {
@@ -172,7 +175,7 @@
                  },
                  events: {
                      'onReady': onPlayerReady,
-                         'onStateChange': onPlayerStateChange
+                    'onStateChange': onPlayerStateChange
                  }
              });
 
@@ -184,7 +187,29 @@
          function onPlayerReady(event) {
              playerReady = true;
              player.loadVideoById(load_id)
+
+
+              function CheckIfSeeked(){
+                  console.log("Actual player time: " + player.getCurrentTime())
+                  console.log("Calculated player time: " + (expectedRunTime))
+                  if (IsPlaying === true){
+                    expectedRunTime += 0.5
+
+                  }
+                  
+
+                  if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 2 ){                 
+                   chatSocket.send(JSON.stringify({
+                       'action' : "seek",
+                'data': player.getCurrentTime(),
+               }));
+
+               }
+               }
+               setInterval(CheckIfSeeked, 500) 
+
              
+    
              
              
 
@@ -198,27 +223,37 @@
              if (event.data == YT.PlayerState.ENDED) {
                  
              }
-             if (event.data == YT.PlayerState.PAUSED) {
-                chatSocket.send(JSON.stringify({
-                'action': "pause",
-               }));
-             }
              if (event.data == YT.PlayerState.PLAYING) {
+                IsPlaying = true
                 chatSocket.send(JSON.stringify({
                 'action': "play",
                }));
-               function my_current_time(){
-                   player.getCurrentTime()
+               date = new Date()
+               time = date.getTime() / 1000
+               videoLastStartTime = time
+               videoActualStartTime = player.getCurrentTime()
 
-                   chatSocket.send(JSON.stringify({
-                'player_time': player.getCurrentTime(),
-               }));
-
-               }
-               setInterval(my_current_time, 500)
+              
             
                 
              }
+             if (event.data == YT.PlayerState.PAUSED) {
+                IsPlaying = false
+                chatSocket.send(JSON.stringify({
+                'action': "pause",
+               }));
+               end = new Date()
+               expectedRunTime += (end.getTime() / 1000) - videoLastStartTime 
+               videoLastStartTime = end.getTime() / 1000
+               videoActualStartTime = player.getCurrentTime()
+             
+               console.log(expectedRunTime)
+
+               
+
+               
+             }
+             
             
             
 
@@ -312,7 +347,7 @@
             if (data.action === 'pause'){
             if(data.current_time){
                     player.pauseVideo()
-                    console.log(data.current_time)
+                    console.log("pause" + data.current_time)
                     player.seekTo(data.current_time)
                 }else{
 
@@ -340,6 +375,19 @@
                 }else{
 
                     player.playVideo()                          
+                }
+            };
+            if (data.action === 'seek'){
+                if(data.current_time){
+                    console.log("called")
+                    console.log(data.current_time)
+                    date = new Date()
+                    time = date.getTime() / 1000
+                    videoLastStartTime = time
+                    expectedRunTime = data.current_time
+                    player.seekTo(data.current_time)
+                }else{
+                         
                 }
             };
 
