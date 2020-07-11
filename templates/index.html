@@ -158,6 +158,7 @@
          // 3. This function creates an <iframe> (and YouTube player)
          //    after the API code downloads.
          var player;
+         let seektime = "";
          var load_id;
          var IsPlaying;
          let UserName = "";
@@ -187,11 +188,14 @@
          function onPlayerReady(event) {
              playerReady = true;
              player.loadVideoById(load_id)
+             console.log("player_ready: " + seektime)
+             setTimeout(function(){ player.seekTo(seektime, true) }, 500);
+
 
 
               function CheckIfSeeked(){
-                  console.log("Actual player time: " + player.getCurrentTime())
-                  console.log("Calculated player time: " + (expectedRunTime))
+                  //console.log("Actual player time: " + player.getCurrentTime())
+                  //console.log("Calculated player time: " + (expectedRunTime))
                   if (IsPlaying === true){
                     expectedRunTime += 0.5
 
@@ -323,6 +327,17 @@
                   data =
          chatSocket.onmessage = function(e) {
              const data = JSON.parse(e.data);
+             if (playerReady){
+                 if(data.seekTo){
+                    player.seekTo(data.seekTo,true)
+                 }
+               }else{
+                if(data.seekTo){
+                    console.log("time to seek" + data.seekTo)
+                    seektime = data.seekTo
+                 }        
+
+               }
              if (data.message){
              document.querySelector('#chat-log').innerHTML +=
              '<div  class="direct-chat-msg left">' +
@@ -349,6 +364,8 @@
                     player.pauseVideo()
                     console.log("pause" + data.current_time)
                     player.seekTo(data.current_time)
+                    videoLastStartTime = time
+                    expectedRunTime = data.current_time
                 }else{
 
                     player.pauseVideo()                         
@@ -372,6 +389,8 @@
                     player.playVideo()
                     console.log(data.current_time)
                     player.seekTo(data.current_time)
+                    videoLastStartTime = time
+                    expectedRunTime = data.current_time
                 }else{
 
                     player.playVideo()                          
@@ -385,13 +404,24 @@
                     time = date.getTime() / 1000
                     videoLastStartTime = time
                     expectedRunTime = data.current_time
-                    player.seekTo(data.current_time)
+                    player.seekTo(data.current_time, true)
+                    player.playVideo() 
                 }else{
                          
                 }
             };
+            if (data.action === "give_time"){
+                console.log("give_time")
+                chatSocket.send(JSON.stringify({
+                 'new_user_time': player.getCurrentTime()
+             }));
 
-         };
+                }else{
+                         
+                }
+            };
+            
+
          chatSocket.onclose = function(e) {
          console.log("WebSocket is closed now.");
          };

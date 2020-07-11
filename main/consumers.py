@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 import random
-import time
+import datetime
 
 
 #{roomid:{'host':'first user in room';,room_users:[],'current_video': '' ,playlist:[]}}
@@ -87,7 +87,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Send message to room group
         username = self.user.username
         await self.send(text_data=json.dumps(room.__dict__))
-        print(json.dumps(room.__dict__))
+        await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'action',
+                        'action': "give_time"
+
+                    })
+
             
 
 
@@ -125,7 +132,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'message': message,
                     "username": username,
                 }
-            )                 
+            ) 
+        elif 'new_user_time' in text_data_json:
+                new_user_time = text_data_json['new_user_time']
+                print(str(new_user_time) + " is the time received")
+                await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': "NewUserTime",
+                    'new_user_time': new_user_time,
+                }
+            )                
         elif 'action' in text_data_json:
             action = text_data_json['action']
             if 'data' in text_data_json:
@@ -151,7 +168,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'data': data,
 
                     }
-                )                                        
+                )
+              
+                                                   
             else:
                 await self.channel_layer.group_send(
                     self.room_group_name,
@@ -207,11 +226,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
         elif action == "seek":
 
                 data = event['data']
-                print("the seeked time: " + str(data))
+                print(self.user.username + " seeked time: " + str(data))
                 await self.send(text_data=json.dumps({
                 'action': action,
                 'current_time': data,
             }))
+        elif action == "give_time":
+            room = rooms[self.room_group_name]
+            print(room.room_users[-1] + self.user.username)
+            if self.user.username == room.room_users[0]:
+                await self.send(text_data=json.dumps({
+                'action': "give_time",
+        }))
 
         else:
                 # Send message to WebSocket
@@ -220,16 +246,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }))            
        
             
-            
-
-       
              
-    async def notification(self, event):
-        new_user = event['new_user']
+
+    async def NewUserTime(self, event):
+        new_user_time = event['new_user_time']
+        print(str(new_user_time) + "is the time for new usesssr")
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'new_user': new_user,
-        }))
+        room = rooms[self.room_group_name]
+        print("user: " + self.user.username + " last_user: " + room.room_users[-1])
+        if self.user.username == room.room_users[-1]:
+            print("call you son of a bitch")
+            await self.send(text_data=json.dumps({
+            'seekTo': new_user_time,}))
+
+        
+
 
 
 
