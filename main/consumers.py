@@ -258,6 +258,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             print("call you son of a bitch")
             await self.send(text_data=json.dumps({
             'seekTo': new_user_time,}))
+        if self.user.username != room.room_users[-1]:
+            print("call you son of a bitch")
+            await self.send(text_data=json.dumps({
+            'new_user': room.room_users[-1],}))
 
         
 

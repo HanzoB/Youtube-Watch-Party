@@ -11,7 +11,7 @@ import random
 
 def room(request,room):
     room_name = request.get_full_path().split('m/')[1]
-    context = {'room_name': room_name}
+    context = {'room_name': room_name, "url":request.get_full_path()}
     return render(request, 'index.html', context)
 
 

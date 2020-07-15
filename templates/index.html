@@ -12,23 +12,48 @@
    </head>
 
    <body>
-      <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-         <form  class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-            <div class="input-group">
-               <input id = "searchbox"   type="text" class="form-control bg-light border-0 small" placeholder="Youtube Url" aria-label="Search" aria-describedby="basic-addon2">
-               <div class="input-group-append">
-                  <button   type="button" id= "loadvideo"  class="btn btn-primary">Load Video</button>
-               </div>
+         <nav class="navbar navbar-expand-lg navbar-light transparent bg-dark">
+            <a class="navbar-brand" href="#" style = "font-family:courier,arial,helvetica;" ><h4><B>Syncpin</B></h4></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+               <!-- <li class="nav-item active">
+                  <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Dropdown
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                  </div>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link disabled" href="#">Disabled</a>
+                </li>-->
+              </ul>
+              <form class="form-inline my-2 my-lg-0">
+                <input id = "searchbox"   type="text" class="form-control mr-sm-2" type="search" placeholder="Youtube URL" aria-label="Load">
+                <button class="btn btn-outline-success my-2 my-sm-0" id= "loadvideo" >Load</button>
+              </form>
             </div>
-         </form>
+          </nav>
 
-      </nav>
       <div class="container-fluid" style="margin-top:30px">
       <div class="row">
       <div class="col-md-8 embed-responsive embed-responsive-16by9">
          <div id="player"></div>
-        </div>
-         <nav  id="player-controls" class="navbar-fixed-top navbar-expand-sm bg-dark navbar-dark">
+
+       <!-- <nav  id="player-controls" class="navbar-fixed-top navbar-expand-sm bg-dark navbar-dark">
               <div class="slidecontainer">
   <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
 </div>
@@ -69,6 +94,7 @@
 
   </ul>
 </nav>-->
+
       </div>
       <div class="col-md-4">
       <div class="card ">
@@ -82,7 +108,7 @@
                </li>
                <li class="navbar-nav">
             
-                <button type="button" id="invite-button" title = "Invite Friends" class="btn btn-outline-primary btn-sm">
+                <button type="button"   id="invite-button" title = "Invite Friends" class="btn btn-outline-primary btn-sm">
                    <svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-person-plus-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
                       <path fill-rule="evenodd" d="M13 7.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0v-2z"/>
@@ -140,8 +166,18 @@
 </div>
 
 
+<Script>
+document.querySelector('#invite-button').onclick = function() {
+    var dummy = document.createElement('input'),
+    text = window.location.href;
 
-
+document.body.appendChild(dummy);
+dummy.value = text;
+dummy.select();
+document.execCommand('copy');
+document.body.removeChild(dummy);
+   </Script>
+   
 
 
 
@@ -200,9 +236,10 @@
                     expectedRunTime += 0.5
 
                   }
-                  
+                  console.log("player current time: " + expectedRunTime)
+                  console.log("expected run time: " + player.getCurrentTime())
 
-                  if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 2 ){                 
+                  if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 5 ){                 
                    chatSocket.send(JSON.stringify({
                        'action' : "seek",
                 'data': player.getCurrentTime(),
@@ -293,7 +330,6 @@
                player.playVideo()
                chatSocket.send(JSON.stringify({
                    'action': "play",
-                   'data': player.getCurrentTime()
 
                }));
 
@@ -303,7 +339,6 @@
             player.pauseVideo()
                chatSocket.send(JSON.stringify({
                    'action': "pause",
-                   'data': player.getCurrentTime()
                }));
                };
 
@@ -323,6 +358,7 @@
              + '/ws/room/'
              + '{{ room_name }}'
          );
+         console.log(chatSocket)
 
                   data =
          chatSocket.onmessage = function(e) {
@@ -540,7 +576,7 @@ position: absolute;
          min-height: 10px;
          }
          body{
-         background:#eee;
+         background:#17202b;
          }
          .card .card-header {
          background: #17202b;
@@ -549,7 +585,7 @@ position: absolute;
          padding: .65rem 1rem;
          position: relative;
          font-weight: 600;
-         color: #ffffff;
+         color: #17202b;
          }
          .scroll {
          max-height: 100px;
@@ -562,7 +598,7 @@ position: absolute;
          min-width: 100%
          }
          body {
-         background-color: #f9f9fa
+         background-color: #333
          }
          .flex {
          -webkit-box-flex: 1;
@@ -588,7 +624,7 @@ position: absolute;
          .box {
          position: relative;
          border-radius: 3px;
-         background: #ffffff;
+         background: #333;
          border-top: 3px solid #d2d6de;
          margin-bottom: 20px;
          width: 100%;
@@ -643,7 +679,7 @@ position: absolute;
          .alert-warning,
          .label-warning,
          .modal-warning .modal-body {
-         background-color: #f39c12 !important
+         background-color: #57060652 !important
          }
          .bg-yellow {
          color: #fff !important
@@ -835,9 +871,9 @@ position: absolute;
          border-top-right-radius: 0;
          border-bottom-right-radius: 3px;
          border-bottom-left-radius: 3px;
-         border-top: 1px solid #f4f4f4;
+         border-top: 1px solid #f3;
          padding: 10px;
-         background-color: #fff
+         background-color: #333
          }
          .box-header:before,
          .box-body:before,
@@ -864,3 +900,12 @@ position: absolute;
          border-color: #eea236
          }
       </style>
+
+
+
+<style>
+    body {
+  height: 100%;
+  background-color: #333;
+}
+</style>
