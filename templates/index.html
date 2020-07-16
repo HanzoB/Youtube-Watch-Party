@@ -1,6 +1,8 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+    
+    
    <head>
       <title>SyncPin</title>
       <meta charset="utf-8">
@@ -10,8 +12,29 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
    </head>
-
+   
+  
    <body>
+       
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="username" class="form-control" type="text" placeholder="username">
+            </div>
+            <div class="modal-footer">
+                <button id="joinRoom" type="button" class="btn btn-secondary" >Join</button>
+            </div>
+            </div>
+        </div>
+        </div>
+    
          <nav class="navbar navbar-expand-lg navbar-light transparent bg-dark">
             <a class="navbar-brand" href="#" style = "font-family:courier,arial,helvetica;" ><h4><B>Syncpin</B></h4></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +66,7 @@
               </ul>
               <form class="form-inline my-2 my-lg-0">
                 <input id = "searchbox"   type="text" class="form-control mr-sm-2" type="search" placeholder="Youtube URL" aria-label="Load">
-                <button class="btn btn-outline-success my-2 my-sm-0" id= "loadvideo" >Load</button>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="button" id= "loadvideo" >Load</button>
               </form>
             </div>
           </nav>
@@ -93,7 +116,9 @@
     
 
   </ul>
-</nav>-->
+</nav>
+-->
+
 
       </div>
       <div class="col-md-4">
@@ -166,17 +191,7 @@
 </div>
 
 
-<Script>
-document.querySelector('#invite-button').onclick = function() {
-    var dummy = document.createElement('input'),
-    text = window.location.href;
 
-document.body.appendChild(dummy);
-dummy.value = text;
-dummy.select();
-document.execCommand('copy');
-document.body.removeChild(dummy);
-   </Script>
    
 
 
@@ -197,7 +212,7 @@ document.body.removeChild(dummy);
          let seektime = "";
          var load_id;
          var IsPlaying;
-         let UserName = "";
+         var userName ="";
          let expectedRunTime = 0.0;
          let videoLastStartTime = 0.0;  
 
@@ -224,7 +239,7 @@ document.body.removeChild(dummy);
          function onPlayerReady(event) {
              playerReady = true;
              player.loadVideoById(load_id)
-             console.log("player_ready: " + seektime)
+             //console.log("player_ready: " + seektime)
              setTimeout(function(){ player.seekTo(seektime, true) }, 500);
 
 
@@ -236,10 +251,10 @@ document.body.removeChild(dummy);
                     expectedRunTime += 0.5
 
                   }
-                  console.log("player current time: " + expectedRunTime)
-                  console.log("expected run time: " + player.getCurrentTime())
+                  //console.log("player current time: " + expectedRunTime)
+                 // console.log("expected run time: " + player.getCurrentTime())
 
-                  if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 5 ){                 
+                  if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 1 ){                 
                    chatSocket.send(JSON.stringify({
                        'action' : "seek",
                 'data': player.getCurrentTime(),
@@ -288,7 +303,7 @@ document.body.removeChild(dummy);
                videoLastStartTime = end.getTime() / 1000
                videoActualStartTime = player.getCurrentTime()
              
-               console.log(expectedRunTime)
+              //console.log(expectedRunTime)
 
                
 
@@ -325,7 +340,8 @@ document.body.removeChild(dummy);
                }));
          });
 
-         //Syncing
+       
+
          document.querySelector('#play-button').onclick = function() {
                player.playVideo()
                chatSocket.send(JSON.stringify({
@@ -346,11 +362,34 @@ document.body.removeChild(dummy);
          document.querySelector('#sync-button').onclick = function() {
             player.stopVideo()
                  };
+                 
 
 
 
       </script>
       <!-- chat script -->
+
+      <script>
+        $(document).ready(function(){
+            $('#exampleModal').modal('show');              
+        }); 
+
+        $("#joinRoom").on("click", function() {
+             console.log("before: " + userName)
+             userName = $("#username").val()
+             console.log("after: " + userName)
+             if (userName != ""){
+                 $('#exampleModal').modal('hide'); 
+                 alert("called")
+             }
+             //document.querySelector('#searchbox').value = ""
+
+            
+         });
+    </script>
+
+
+
       <script>
          const chatSocket = new WebSocket(
              'ws://'
@@ -474,7 +513,7 @@ document.body.removeChild(dummy);
                  document.querySelector('#chat-message-submit').click();
              }
          };
-
+         
          document.querySelector('#chat-message-submit').onclick = function(e) {
              const messageInputDom = document.querySelector('#chat-message-input');
              const message = messageInputDom.value;
@@ -489,11 +528,14 @@ document.body.removeChild(dummy);
              element.scrollTop = element.scrollHeight;
          };
 
+         
+
+       
+
           
       </script>
 
-
-
+      
 
 
 
@@ -563,9 +605,13 @@ position: absolute;
       <style>
          .page-container {
          min-height: 600px;
+         opacity: 0.5;
          }
          .card-body {
          min-height: 600px;
+         background:#333;
+         
+
          }
          .card .card-footer{
          }
@@ -579,13 +625,13 @@ position: absolute;
          background:#17202b;
          }
          .card .card-header {
-         background: #17202b;
+         background:#333;
          border: 0;
          font-size: 1rem;
          padding: .65rem 1rem;
          position: relative;
          font-weight: 600;
-         color: #17202b;
+         color: #333;
          }
          .scroll {
          max-height: 100px;
@@ -619,7 +665,7 @@ position: absolute;
          padding: 0
          }
          .box.box-warning {
-         border-top-color: #f39c12
+         border-top-color: #333
          }
          .box {
          position: relative;
@@ -631,10 +677,10 @@ position: absolute;
          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1)
          }
          .box-header.with-border {
-         border-bottom: 1px solid #f4f4f4
+         border-bottom: 1px solid #333
          }
          .box-header.with-border {
-         border-bottom: 1px solid #f4f4f4
+         border-bottom: 1px solid #333
          }
          .box-header {
          color: #444;
@@ -682,7 +728,7 @@ position: absolute;
          background-color: #57060652 !important
          }
          .bg-yellow {
-         color: #fff !important
+         color: #333 !important
          }
          .btn {
          border-radius: 3px;
@@ -748,7 +794,7 @@ position: absolute;
          font-size: 12px
          }
          .direct-chat-timestamp {
-         color: #999
+         color: rgb(255, 255, 255)
          }
          .btn-group-vertical>.btn-group:after,
          .btn-group-vertical>.btn-group:before,
@@ -795,10 +841,10 @@ position: absolute;
          border-radius: 5px;
          position: relative;
          padding: 5px 10px;
-         background: #d2d6de;
-         border: 1px solid #d2d6de;
+         background: rgb(255, 255, 255,0.2);
+         border: 1px solid rgb(255, 255, 255,0.2);
          margin: 5px 0 0 50px;
-         color: #444
+         color: rgba(0, 0, 0, 0.356)
          }
          .direct-chat-msg,
          .direct-chat-text {
@@ -896,8 +942,15 @@ position: absolute;
          }
          .btn-warning {
          color: #fff;
-         background-color: #f0ad4e;
-         border-color: #eea236
+         background-color: #0000008a;
+         border-color: #333
+         }
+         #searchbox{
+          color: #fff;
+         background-color: #0000008a;
+         border-color: #333
+
+
          }
       </style>
 
@@ -909,3 +962,4 @@ position: absolute;
   background-color: #333;
 }
 </style>
+
