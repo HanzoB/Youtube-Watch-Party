@@ -6,6 +6,8 @@ import datetime
 
 #{roomid:{'host':'first user in room';,room_users:[],'current_video': '' ,playlist:[]}}
 rooms = {}
+confirmations = 0
+
 
 
 class Room:
@@ -33,7 +35,7 @@ class Room:
         self.room_users.append(user)
 
     def remove_user(self, user):
-        self.room_users.remove(user)
+        self.room_users.remove(user)       
 
     def is_empty(self):
         if len(self.room_users) == 0:
@@ -64,7 +66,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room']
         self.room_group_name = 'room_%s' % self.room_name
         self.user = self.scope['user']
-        username = self.user.username = "User_" + str(random.randint(0, 100000))
+      
 
         if self.room_group_name not in rooms:
             rooms[self.room_group_name] = Room()
@@ -72,11 +74,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             room.create_room(self.room_group_name)
         else:
             room = rooms[self.room_group_name]
-        if room.room_host == '':
-            room.room_host = username
-        if username not in room.room_users:
-            room.add_user(username)
-        print(room.room_users)
+        
         # Join room group
         await self.channel_layer.group_add(
 
@@ -85,7 +83,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
         await self.accept()
         # Send message to room group
-        username = self.user.username
         await self.send(text_data=json.dumps(room.__dict__))
         await self.channel_layer.group_send(
                     self.room_group_name,
@@ -109,10 +106,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
         room = rooms[self.room_group_name]
         room.remove_user(self.user.username)
+        username = self.user.username
+        if len(room.room_users) == 1:
+                room.room_host = username[0]
 
-
+        print("Disconnected: ")
         print(room.room_users)
-        print(rooms)
 
 
 
@@ -120,9 +119,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from WebSocket
     async def receive(self, text_data):
-        username = self.user.username
+        username = self.user.username.split("_")[0]
         room = rooms[self.room_group_name]
-        text_data_json = json.loads(text_data)
+        text_data_json = json.loads(text_data)  
+        if 'username' in text_data_json:
+            username = self.user.username = text_data_json['username'] +"_"+ str(random.randint(0,1000000))
+            room = rooms[self.room_group_name]
+            if len(room.room_users) == 1:
+                room.room_host = username
+            room.add_user(username)
+            print("Connected: ")
+            print(room.room_users)
+            
+        
+
+
         if 'message' in text_data_json:
             message = text_data_json['message']
             await self.channel_layer.group_send(
@@ -148,13 +159,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
             if 'data' in text_data_json:
                 data = text_data_json['data']
                 if action == "play" or action == "pause" or action =="seek":
-                        print("seekit: " + str(data))
+                        print(self.user.username + "action: " + action + ": " + str(data))
                         await self.channel_layer.group_send(
                         self.room_group_name,
                         {
                             'type': 'action',
                             'action': action,
                             'data': data,
+                            'username': self.user.username,
 
                         }
                     )
@@ -166,6 +178,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'type': 'action',
                         'action': action,
                         'data': data,
+                        'username': self.user.username,
 
                     }
                 )
@@ -177,6 +190,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     {
                         'type': 'action',
                         'action': action,
+                        'username': self.user.username,
+
 
                     }
                 )
@@ -194,7 +209,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Receive message from room group
     async def chat(self, event):
         message = event['message']
-        print(message)
         await self.send(text_data=json.dumps({
             'message': message,
             "username": event["username"],
@@ -207,14 +221,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
             if 'current_time' in event:
                 print("is this even tried?")
                 data = event['current_time']
-                await self.send(text_data=json.dumps({
-                'action': action,
-                'current_time': data,
-            }))
+                username = event['username']
+                print("Pause/Play Initiator: " + username)
+                if self.user.username != username:
+                    await self.send(text_data=json.dumps({
+                    'action': action,
+                    'current_time': data,
+                }))
+                
             else:
-                await self.send(text_data=json.dumps({
-                'action': action,
-            })) 
+                username = event['username']
+                print("Pause/Play Initiator: " + username)
+                if self.user.username != username:
+                    await self.send(text_data=json.dumps({
+                    'action': action,
+                })) 
 
         elif action == "load_video":
                 data = event['data']
@@ -226,18 +247,25 @@ class ChatConsumer(AsyncWebsocketConsumer):
         elif action == "seek":
 
                 data = event['data']
+                username = event['username']
                 print(self.user.username + " seeked time: " + str(data))
-                await self.send(text_data=json.dumps({
-                'action': action,
-                'current_time': data,
-            }))
+                if self.user.username != username:
+                    print(self.user.username + " followed time: " + str(data))
+
+                    await self.send(text_data=json.dumps({
+                    'action': action,
+                    'current_time': data,
+                 }))
+                
         elif action == "give_time":
             room = rooms[self.room_group_name]
-            print(room.room_users[-1] + self.user.username)
-            if self.user.username == room.room_users[0]:
-                await self.send(text_data=json.dumps({
-                'action': "give_time",
-        }))
+            print("room len: " + str(len(room.room_users)))
+            if len(room.room_users) > 0:
+                print("last guy: " + room.room_users[-1] + "self: " + self.user.username)
+                if self.user.username == room.room_users[0]:
+                    await self.send(text_data=json.dumps({
+                    'action': "give_time",
+                }))
 
         else:
                 # Send message to WebSocket
@@ -255,13 +283,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         room = rooms[self.room_group_name]
         print("user: " + self.user.username + " last_user: " + room.room_users[-1])
         if self.user.username == room.room_users[-1]:
-            print("call you son of a bitch")
             await self.send(text_data=json.dumps({
             'seekTo': new_user_time,}))
         if self.user.username != room.room_users[-1]:
-            print("call you son of a bitch")
             await self.send(text_data=json.dumps({
-            'new_user': room.room_users[-1],}))
+            'new_user': room.room_users[-1].split("_")[0],}))
 
         
 

@@ -210,17 +210,20 @@
          //    after the API code downloads.
          var player;
          let seektime = "";
-         var load_id;
+         var load_id = "";
          var IsPlaying;
          var userName ="";
+         var confirmation;
          let expectedRunTime = 0.0;
          let videoLastStartTime = 0.0;  
+         let chatSocket = {};
+         var isSeeking = false;
 
          function onYouTubeIframeAPIReady() {
              player = new YT.Player('player', {
                  height: '390',
                  width: '640',
-                 videoId: "VwA5JjCAhG4",
+                 videoId: "50yJB7Zerjk",
                  playerVars: {
                      'autoplay': 1,
                      'controls': 1
@@ -238,9 +241,13 @@
          // 4. The API will call this function when the video player is ready.
          function onPlayerReady(event) {
              playerReady = true;
-             player.loadVideoById(load_id)
-             //console.log("player_ready: " + seektime)
-             setTimeout(function(){ player.seekTo(seektime, true) }, 500);
+             if (load_id != ""){
+                player.loadVideoById(load_id)
+             }
+             if (seektime != ""){
+                player.seekTo(seektime, true)
+             }
+            
 
 
 
@@ -251,16 +258,26 @@
                     expectedRunTime += 0.5
 
                   }
-                  //console.log("player current time: " + expectedRunTime)
-                 // console.log("expected run time: " + player.getCurrentTime())
+                  console.log("Expected run time: " + expectedRunTime)
+                  console.log("Actual player time:: " + player.getCurrentTime())
 
-                  if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 1 ){                 
+                  if (isSeeking === false){
+                    if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 5 ){                 
                    chatSocket.send(JSON.stringify({
                        'action' : "seek",
                 'data': player.getCurrentTime(),
                }));
+               expectedRunTime = player.getCurrentTime()
 
                }
+
+
+                  }else{
+                      console.log("Currently Seeking")
+                  }
+                  
+
+
                }
                setInterval(CheckIfSeeked, 500) 
 
@@ -281,13 +298,15 @@
              }
              if (event.data == YT.PlayerState.PLAYING) {
                 IsPlaying = true
+                //confirmation  += 1
                 chatSocket.send(JSON.stringify({
                 'action': "play",
+               // 'confirmation': confirmation ,
                }));
                date = new Date()
                time = date.getTime() / 1000
                videoLastStartTime = time
-               videoActualStartTime = player.getCurrentTime()
+              
 
               
             
@@ -297,11 +316,11 @@
                 IsPlaying = false
                 chatSocket.send(JSON.stringify({
                 'action': "pause",
+                'confirmation': confirmation ,
                }));
                end = new Date()
                expectedRunTime += (end.getTime() / 1000) - videoLastStartTime 
                videoLastStartTime = end.getTime() / 1000
-               videoActualStartTime = player.getCurrentTime()
              
               //console.log(expectedRunTime)
 
@@ -381,6 +400,24 @@
              if (userName != ""){
                  $('#exampleModal').modal('hide'); 
                  alert("called")
+                 chatSocket = new WebSocket(
+             'ws://'
+             + window.location.host
+             + '/ws/room/'
+             + '{{ room_name }}'
+
+             
+             
+         );
+         chatSocket.onmessage = WebsocketOnMessage
+         
+         
+             chatSocket.onopen = function(e) {
+                chatSocket.send(JSON.stringify({
+                 'username': userName
+             }));
+         };
+         console.log(chatSocket)
              }
              //document.querySelector('#searchbox').value = ""
 
@@ -391,29 +428,27 @@
 
 
       <script>
-         const chatSocket = new WebSocket(
-             'ws://'
-             + window.location.host
-             + '/ws/room/'
-             + '{{ room_name }}'
-         );
-         console.log(chatSocket)
+         
 
-                  data =
-         chatSocket.onmessage = function(e) {
+
+        
+        WebsocketOnMessage = function(e) {
              const data = JSON.parse(e.data);
              if (playerReady){
                  if(data.seekTo){
-                    player.seekTo(data.seekTo,true)
+                    setTimeout(function(){ player.seekTo(data.seekTo - 0.5,true) }, 500);
+                    
+                    console.log("seeking, player ready")
                  }
                }else{
                 if(data.seekTo){
-                    console.log("time to seek" + data.seekTo)
+                    console.log("player wasnt ready")
                     seektime = data.seekTo
                  }        
 
                }
-             if (data.message){
+            if(data.message){
+                console.log("message called")
              document.querySelector('#chat-log').innerHTML +=
              '<div  class="direct-chat-msg left">' +
              '<div class="direct-chat-info clearfix">' +
@@ -425,7 +460,7 @@
              '</div>'
              updateScroll()
              }
-             if (data.new_user){
+             if(data.new_user){
              document.querySelector('#chat-log').innerHTML +=
              '<div  class="direct-chat-msg left">' +
              '<div class="direct-chat-info clearfix">' +
@@ -436,22 +471,27 @@
             }
             if (data.action === 'pause'){
             if(data.current_time){
+                //if (confirmation == data.confirmation){
                     player.pauseVideo()
                     console.log("pause" + data.current_time)
-                    player.seekTo(data.current_time)
-                    videoLastStartTime = time
-                    expectedRunTime = data.current_time
+                    //videoLastStartTime = time
+                    //expectedRunTime = data.current_time
+
+                //}
+                   
                 }else{
 
                     player.pauseVideo()                         
                 }
             };
-            if (data.action === 'load_video'){
+             if (data.action === 'load_video'){
                    player.loadVideoById(data.data, 1, "default")
-                   player.seekTo(0,"false")
+                   console.log("called load video")
+                   setTimeout(function(){ player.seekTo(0,true) }, 500)
             };
            if (data.current_video){
                if (playerReady){
+                   console.log("video is set")
                 player.loadVideoById(data.current_video, 1, "default")
                 player.playVideo()
                }else{
@@ -460,27 +500,39 @@
                }
             };
             if (data.action === 'play'){
-                if(data.current_time){
+               // if (confirmation == data.confirmation){
+                    if(data.current_time){
                     player.playVideo()
                     console.log(data.current_time)
-                    player.seekTo(data.current_time)
-                    videoLastStartTime = time
-                    expectedRunTime = data.current_time
+                   // videoLastStartTime = time
+                    //expectedRunTime = data.current_time
                 }else{
 
                     player.playVideo()                          
                 }
+                //}
+                
             };
             if (data.action === 'seek'){
                 if(data.current_time){
-                    console.log("called")
+                    console.log("called" + data.current_time)
                     console.log(data.current_time)
                     date = new Date()
                     time = date.getTime() / 1000
-                    videoLastStartTime = time
-                    expectedRunTime = data.current_time
+                    videoLastStartTime = time           
+                    isSeeking = true
                     player.seekTo(data.current_time, true)
-                    player.playVideo() 
+                    expectedRunTime = data.current_time
+                    
+                    function waitseek(){
+                        if (data.current_time == player.getCurrentTime()){
+                            isSeeking = false
+                        }
+                    
+                    }
+
+                    setInterval(waitseek, 100) 
+                    
                 }else{
                          
                 }
@@ -527,11 +579,6 @@
              var element = document.getElementById("chat-log");
              element.scrollTop = element.scrollHeight;
          };
-
-         
-
-       
-
           
       </script>
 
@@ -960,6 +1007,12 @@ position: absolute;
     body {
   height: 100%;
   background-color: #333;
+}
+
+.modal-backdrop
+{
+    background-color: #333;
+    opacity:1 !important;
 }
 </style>
 
