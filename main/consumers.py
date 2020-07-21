@@ -6,7 +6,6 @@ import datetime
 
 #{roomid:{'host':'first user in room';,room_users:[],'current_video': '' ,playlist:[]}}
 rooms = {}
-confirmations = 0
 
 
 
@@ -19,6 +18,8 @@ class Room:
         self.current_video = ''
         self.playlist = []
         self.current_time = 0
+        self.confirmation = 0
+        self.state = ""
 
     def curr_video(self, video):
         self.current_video = video
@@ -37,9 +38,18 @@ class Room:
     def remove_user(self, user):
         self.room_users.remove(user)       
 
-    def is_empty(self):
+    def isEmpty(self):
         if len(self.room_users) == 0:
             return True
+
+    def confirmations(self):
+        return self.confirmation
+
+    def SetPlayerState(self,state):
+        self.state = state
+
+    def GetPlayerState(self):
+        return self.state      
 
     def room_host(self, host):
         if self.room_host == '':
@@ -156,10 +166,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )                
         elif 'action' in text_data_json:
             action = text_data_json['action']
+            room = rooms[self.room_group_name]
             if 'data' in text_data_json:
                 data = text_data_json['data']
                 if action == "play" or action == "pause" or action =="seek":
                         print(self.user.username + "action: " + action + ": " + str(data))
+                        if action == "play" or action == "pause":
+                            room.SetPlayerState(action)
                         await self.channel_layer.group_send(
                         self.room_group_name,
                         {
@@ -185,6 +198,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
               
                                                    
             else:
+                room.SetPlayerState(action)
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
@@ -284,7 +298,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print("user: " + self.user.username + " last_user: " + room.room_users[-1])
         if self.user.username == room.room_users[-1]:
             await self.send(text_data=json.dumps({
-            'seekTo': new_user_time,}))
+            'seekTo': new_user_time,
+            'playerstate': room.GetPlayerState()   }))
         if self.user.username != room.room_users[-1]:
             await self.send(text_data=json.dumps({
             'new_user': room.room_users[-1].split("_")[0],}))
