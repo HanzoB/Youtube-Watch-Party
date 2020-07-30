@@ -388,7 +388,7 @@
                 $('#exampleModal').modal('hide');
                 alert("called")
                 chatSocket = new WebSocket(
-                    'wss://' +
+                    'ws://' +
                     window.location.host +
                     '/ws/room/' +
                     '{{ room_name }}'
@@ -1051,14 +1051,10 @@
         body {
             height: 100%;
             background-color: #333;
-            background-image: url('static/mountain_sky.jpg');
         }
         
         .modal-backdrop {
-            background-image: url('static/mountain_sky.jpg');
-        }
-        
-        .modal-body {
-            background-image: url('static/mountain_sky.jpg');
+            background-color: #333;
+            opacity: 1 !important;
         }
     </style>
