@@ -366,3 +366,19 @@ function updateScroll() {
     var element = document.getElementById("chat-log");
     element.scrollTop = element.scrollHeight;
 };
+
+//playlist shiz
+$(document).ready(function() {
+    $(".arrow-right").bind("click", function(event) {
+        event.preventDefault();
+        $(".vid-list-container").stop().animate({
+            scrollLeft: "+=336"
+        }, 750);
+    });
+    $(".arrow-left").bind("click", function(event) {
+        event.preventDefault();
+        $(".vid-list-container").stop().animate({
+            scrollLeft: "-=336"
+        }, 750);
+    });
+});
