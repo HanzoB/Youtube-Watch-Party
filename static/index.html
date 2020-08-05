@@ -1,21 +1,123 @@
-{% load static %}
-<!DOCTYPE html>
+<!doctype html> {% load static %}
 <html lang="en">
 
-
 <head>
-    <title>SyncPin</title>
+    <title>syncgfn</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/dashboard/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="../assets/dist/css/bootstrap.css" rel="stylesheet">
+
+
+    <style>
+        body {
+            background-color: #191919;
+        }
+        
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        .navbar {
+            box-shadow: rgba(0, 0, 0, 0.6) -5px 0px 10px;
+            background: #191919;
+            border-radius: 2px;
+        }
+        
+        #ChatSideBar {
+            box-shadow: rgba(35, 45, 185, 0.2) -5px 0px 10px;
+            background: transparent;
+            color: white;
+        }
+        
+        #chat-message-input {
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            background: none;
+            border-radius: 20px;
+            color: white;
+            max-width: 95%;
+        }
+        
+        #chat-inner {
+            padding-top: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
+            max-height: 520px;
+        }
+        
+        #chat-log {
+            overflow-y: auto;
+            max-height: 520px;
+        }
+        
+        #chat-msg {
+            padding-bottom: 10px;
+            list-style-type: none;
+        }
+        
+        #chatContainer {
+            position: absolute;
+            bottom: 10px;
+        }
+        
+        @font-face {
+            font-family: 'LogoFont';
+            src: url("Aquire-BW0ox.otf") format("opentype");
+        }
+        
+        @font-face {
+            font-family: 'Funky';
+            src: url("funky.ttf") format("opentype");
+        }
+        
+        .container.mainContainer {
+            max-width: 98%;
+        }
+        
+         ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+         ::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 5px grey;
+            border-radius: 10px;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background: black;
+            border-radius: 10px;
+        }
+        
+         ::-webkit-scrollbar-thumb:hover {
+            background: rgb(54, 56, 58);
+        }
+        
+        .border-bottom {
+            color: rgba(35, 45, 185, 0.6) -5px 0px 10px;
+        }
+        
+        .card-body {
+            background: transparent;
+        }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="dashboard.css" rel="stylesheet">
 </head>
 
-
 <body>
-
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -32,1029 +134,228 @@
             </div>
         </div>
     </div>
-
-    <nav class="navbar navbar-expand-lg navbar-light transparent bg-dark">
-        <a class="navbar-brand" href="#" style="font-family:courier,arial,helvetica;">
-            <h4>
-                <B>Syncpin</B>
-            </h4>
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <!-- <li class="nav-item active">
-                  <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Dropdown
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                  </div>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link disabled" href="#">Disabled</a>
-                </li>-->
-            </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input id="searchbox" type="text" class="form-control mr-sm-2" type="search" placeholder="Youtube URL" aria-label="Load">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="loadvideo">Play</button>
-                <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="AddToPlaylist">Add To Playlist</button>
-            </form>
-        </div>
+    <nav class="navbar navbar-dark sticky-top  flex-md-nowrap p-0 shadow">
+        <a class=" col-md-3 col-lg-2 mr-0 px-3" href="#" style="font-family: LogoFont; font-size: 20px; color:white;">SyncPin</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+        <input id="searchbox" style="border-radius: 25px;" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <a id="loadvideo" class="nav-link" type="button"><svg width="2em" height="2em" viewBox="0 0 16 16" class="bi " fill="green" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                  </svg></a>
+            </li>
+        </ul>
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <a id="AddToPlaylist" class="nav-link" type="button"><svg width="2em" height="2em" viewBox="0 0 16 16" class="bi" fill=" rgba(35, 45, 185, 0.6)" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
+                    <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
+                    <path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                  </svg></a>
+            </li>
+        </ul>
     </nav>
 
-    <div class="container-fluid" style="margin-top:30px">
+    <div class="container mainContainer">
+
         <div class="row">
-            <div class="col-md-8 embed-responsive embed-responsive-16by9">
-                <div id="player"></div>
+            <div class="col-12">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 style="color:white;" class="h2">Currently Online:</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
 
-                <!-- <nav  id="player-controls" class="navbar-fixed-top navbar-expand-sm bg-dark navbar-dark">
-              <div class="slidecontainer">
-  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-</div>
-  <ul class="navbar-nav">
+                        <button type="button" class="btn btn-circle "><svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-person-plus-fill" fill="green" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+                            <path fill-rule="evenodd" d="M13 7.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0v-2z"/>
+                         </svg></button>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
 
 
-    <ul class="navbar-nav">
-            <button type="button" id="play-button" title = "Play" class="btn btn-outline-primary btn-sm">
-               <svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-play-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
-               </svg>
-            </button>
-            </ul>
+            <div class="col-9">
 
-    <ul class="navbar-nav">
-            <button type="button" id="pause-button" title = "Pause"  class="btn btn-outline-secondary btn-sm">
-               <svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-pause-fill" fill="orange" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/>
-               </svg>
-            </button>
-                </ul>
-    <ul class="navbar-nav">
-            <button type="button" id="stop-button" title = "Stop"  class="btn btn-outline-secondary btn-sm">
-               <svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-stop-fill" fill="red" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z"/>
-               </svg>
-            </button>
-                    </ul>
-    <ul class="navbar-nav">
-            <button type="button" id="next-button"title = "Next Video"  class="btn btn-outline-success btn-sm">
-               <svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" d="M8.146 4.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.793 8 8.146 5.354a.5.5 0 0 1 0-.708z"/>
-                  <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5H11a.5.5 0 0 1 0 1H4.5A.5.5 0 0 1 4 8z"/>
-               </svg>
-            </button>
-        </ul>
-    
 
-  </ul>
-</nav>
--->
-
+                <div class="embed-responsive embed-responsive-21by9">
+                    <div id="player"></div>
+                </div>
 
             </div>
-            <div class="col-md-4">
-                <div class="card ">
-                    <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs pull-right" id="myTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Chat</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Playlist</a>
-                            </li>
-                            <li class="navbar-nav">
+            <div style="border-radius: 15px;" id="ChatSideBar" class="col-3 ">
+                <div id="chat-inner">
+                    <div id="chat-log">
+                        <li id="chat-msg">
+                            <li style="font-family: Funky; font-size: 25px; list-style-type: none;">Username: </li>
+                            adsadsadsa
+                        </li>
+                        <li id="chat-msg">
+                            <li style="font-family: Funky; font-size: 25px; list-style-type: none;">Username: </li>
+                            adsadsadsa
+                        </li>
+                        <li id="chat-msg">
+                            <li style="font-family: Funky; font-size: 25px; list-style-type: none;">Username: </li>
+                            adsadsadsa
+                        </li>
+                        <li id="chat-msg">
+                            <li style="font-family: Funky; font-size: 25px; list-style-type: none;">Username: </li>
+                            adsadsadsa
+                        </li>
 
-                                <button type="button" id="invite-button" title="Invite Friends" class="btn btn-outline-primary btn-sm">
-                   <svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-person-plus-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
-                      <path fill-rule="evenodd" d="M13 7.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0v-2z"/>
-                   </svg>
-    
-                </button>
-                            </li>
-                            <li class="nav-item">
-                                <button type="button" id="sync-button" title="Sync" class="btn btn-outline-danger btn-sm">
-                   <svg width="4em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-repeat" fill="pink" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M2.854 7.146a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L2.5 8.207l1.646 1.647a.5.5 0 0 0 .708-.708l-2-2zm13-1a.5.5 0 0 0-.708 0L13.5 7.793l-1.646-1.647a.5.5 0 0 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0 0-.708z"/>
-                      <path fill-rule="evenodd" d="M8 3a4.995 4.995 0 0 0-4.192 2.273.5.5 0 0 1-.837-.546A6 6 0 0 1 14 8a.5.5 0 0 1-1.001 0 5 5 0 0 0-5-5zM2.5 7.5A.5.5 0 0 1 3 8a5 5 0 0 0 9.192 2.727.5.5 0 1 1 .837.546A6 6 0 0 1 2 8a.5.5 0 0 1 .501-.5z"/>
-                   </svg>
-                </button>
 
-                            </li>
-                        </ul>
                     </div>
-                    <div class="card-body">
-                        <div class="tab-content" id="myTabContent">
-                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                                <div id="chat-log" class="page-content page-container direct-chat-messages">
-                                </div>
-                                <div class="card-footer">
-                                    <div class="input-group">
-                                        <input id="chat-message-input" type="text" name="message" placeholder="{{ username }} ..." class="form-control">
-                                        <span id="chat-message-submit" class="input-group-btn"> <button id = "chat-message-submit"  value="Send" type="button" class="btn btn-warning btn-flat">Send</button>
-                        </span>
-                                    </div>
+                </div>
+
+
+
+
+
+                <div id="chatContainer" class="input-group">
+                    <input id="chat-message-input" style="border-radius: 15px;" class="form-control " type="text" placeholder="Search" aria-label="Search">
+
+                </div>
+
+            </div>
+
+        </div>
+        <div class="row">
+
+            <div class="col-9">
+
+
+                <div style="padding-top: 25px;" id="recipeCarousel" class="carousel slide w-100" data-ride="carousel">
+                    <div class="carousel-inner w-200" role="listbox">
+                        <div class="carousel-item active">
+                            <div class="col-md-2">
+                                <div class="card card-body">
+                                    <img class="img-fluid" src="https://img.youtube.com/vi/ckM2ZF3XeEc/hqdefault.jpg">
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                <div class="page-content page-container direct-chat-messages">
-                                    <div class="card-body">
-                                        <h5 class="card-title">what?</h5>
-                                        <p class="card-text">Giver</p>
-                                        <a href="#" class="btn btn-primary">Insert in deathknife</a>
-                                    </div>
-
+                        </div>
+                        <div class="carousel-item">
+                            <div class="col-md-2">
+                                <div class="card card-body">
+                                    <img class="img-fluid" src="https://img.youtube.com/vi/ckM2ZF3XeEc/hqdefault.jpg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="col-md-2">
+                                <div class="card card-body">
+                                    <img class="img-fluid" src="https://img.youtube.com/vi/ckM2ZF3XeEc/hqdefault.jpg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="col-md-2">
+                                <div class="card card-body">
+                                    <img class="img-fluid" src="https://img.youtube.com/vi/ckM2ZF3XeEc/hqdefault.jpg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="col-md-2">
+                                <div class="card card-body">
+                                    <img class="img-fluid" src="https://img.youtube.com/vi/ckM2ZF3XeEc/hqdefault.jpg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="col-md-2">
+                                <div class="card card-body">
+                                    <img class="img-fluid" src="https://img.youtube.com/vi/ckM2ZF3XeEc/hqdefault.jpg">
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <a class="carousel-control-prev w-auto" href="#recipeCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon bg-dark border border-dark rounded-circle" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next w-auto" href="#recipeCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon bg-dark border border-dark rounded-circle" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
                 </div>
+
+                <script>
+                    $('#recipeCarousel').carousel({
+                        interval: false,
+
+                    })
+
+                    $('.carousel .carousel-item').each(function() {
+                        var minPerSlide = 6;
+                        var next = $(this).next();
+                        if (!next.length) {
+                            next = $(this).siblings(':first');
+                        }
+                        next.children(':first-child').clone().appendTo($(this));
+
+                        for (var i = 0; i < minPerSlide; i++) {
+                            next = next.next();
+                            if (!next.length) {
+                                next = $(this).siblings(':first');
+                            }
+
+                            next.children(':first-child').clone().appendTo($(this));
+                        }
+                    });
+                </script>
+                <style>
+                    @media (max-width: 768px) {
+                        .carousel-inner .carousel-item>div {
+                            display: none;
+                        }
+                        .carousel-inner .carousel-item>div:first-child {
+                            display: block;
+                        }
+                    }
+                    
+                    .carousel-inner .carousel-item.active,
+                    .carousel-inner .carousel-item-next,
+                    .carousel-inner .carousel-item-prev {
+                        display: flex;
+                    }
+                    /* display 3 */
+                    
+                    @media (min-width: 768px) {
+                        .carousel-inner .carousel-item-right.active,
+                        .carousel-inner .carousel-item-next {
+                            transform: translateX(33.333%);
+                        }
+                        .carousel-inner .carousel-item-left.active,
+                        .carousel-inner .carousel-item-prev {
+                            transform: translateX(-33.333%);
+                        }
+                    }
+                    
+                    .carousel-inner .carousel-item-right,
+                    .carousel-inner .carousel-item-left {
+                        transform: translateX(0);
+                    }
+                </style>
+
             </div>
-
-
-
 
         </div>
     </div>
-    </div>
-    </div>
-    </div>
-    </div>
-
-
-
-
-
-
-
-
-    <!-- iframe script -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script>
-        // 2. This code loads the IFrame Player API code asynchronously.
-        var tag = document.createElement('script');
-
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        // 3. This function creates an <iframe> (and YouTube player)
-        //    after the API code downloads.
-        var player;
-        let seektime = "";
-        var load_id = "";
-        var IsPlaying;
-        var userName = "";
-        var confirmation;
-        let expectedRunTime = 0.0;
-        let videoLastStartTime = 0.0;
-        let chatSocket = {};
-        var isSeeking = false;
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '390',
-                width: '640',
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 1,
-                    'rel:': 0
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-
-
-        }
-
-        var playerReady = false;
-        // 4. The API will call this function when the video player is ready.
-        function onPlayerReady(event) {
-            playerReady = true;
-            if (load_id != "") {
-                player.loadVideoById(load_id)
-            }
-            if (seektime != "") {
-                player.seekTo(seektime, true)
-            }
-
-
-
-
-            function CheckIfSeeked() {
-                //console.log("Actual player time: " + player.getCurrentTime())
-                //console.log("Calculated player time: " + (expectedRunTime))
-                if (IsPlaying === true) {
-                    expectedRunTime += 0.5
-
-                }
-                console.log("Expected run time: " + expectedRunTime)
-                console.log("Actual player time:: " + player.getCurrentTime())
-
-                if (isSeeking === false) {
-                    if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 5) {
-                        chatSocket.send(JSON.stringify({
-                            'action': "seek",
-                            'data': player.getCurrentTime(),
-                        }));
-                        expectedRunTime = player.getCurrentTime()
-
-                    }
-
-
-                } else {
-                    console.log("Currently Seeking")
-                }
-
-
-
-            }
-            setInterval(CheckIfSeeked, 500)
-
-
-
-
-
-
-        }
-
-
-        // 5. The API calls this function when the player's state changes.
-        //    The function indicates that when playing a video (state=1),
-        //    the player should play for six seconds and then stop.
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.ENDED) {
-
-            }
-            if (event.data == YT.PlayerState.PLAYING) {
-                IsPlaying = true
-                    //confirmation  += 1
-                chatSocket.send(JSON.stringify({
-                    'action': "play",
-                    // 'confirmation': confirmation ,
-                }));
-                date = new Date()
-                time = date.getTime() / 1000
-                videoLastStartTime = time
-
-
-
-
-
-            }
-            if (event.data == YT.PlayerState.PAUSED) {
-                IsPlaying = false
-                chatSocket.send(JSON.stringify({
-                    'action': "pause",
-                    'confirmation': confirmation,
-                }));
-                end = new Date()
-                expectedRunTime += (end.getTime() / 1000) - videoLastStartTime
-                videoLastStartTime = end.getTime() / 1000
-
-                //console.log(expectedRunTime)
-
-
-
-
-            }
-
-
-
-
-        }
-
-        //Parsing the video ID from youtube URL
-        function YouTubeGetID(url) {
-            var ID = '';
-            url = url.toString().replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-            if (url[2] !== undefined) {
-                ID = url[2].split(/[^0-9a-z_\-]/i);
-                ID = ID[0];
-            } else {
-                ID = url;
-            }
-            return ID;
-        }
-        $("#loadvideo").on("click", function() {
-            url = $("#searchbox").val().match(/(\?|&)v=([^&#]+)/)
-            video_id = YouTubeGetID(url)
-            document.querySelector('#searchbox').value = ""
-            player.loadVideoById(video_id, 0, "default");
-            player.stopVideo()
-            chatSocket.send(JSON.stringify({
-                'action': "load_video",
-                'data': video_id
-            }));
-            setTimeout(function() {
-                player.seekTo(0, true)
-            }, 100)
-        });
-        $("#AddToPlaylist").on("click", function() {
-            url = $("#searchbox").val().match(/(\?|&)v=([^&#]+)/)
-            video_id = YouTubeGetID(url)
-            document.querySelector('#searchbox').value = ""
-            chatSocket.send(JSON.stringify({
-                'action': "add_to_playlist",
-                'data': video_id
-            }));
-        });
-    </script>
-    <!-- chat script -->
-
-    <script>
-        $(document).ready(function() {
-            $('#exampleModal').modal('show');
-        });
-
-        $("#joinRoom").on("click", function() {
-            console.log("before: " + userName)
-            userName = $("#username").val()
-            console.log("after: " + userName)
-            if (userName != "") {
-                $('#exampleModal').modal('hide');
-                alert("called")
-                chatSocket = new WebSocket(
-                    'ws://' +
-                    window.location.host +
-                    '/ws/room/' +
-                    '{{ room_name }}'
-
-
-
-                );
-                chatSocket.onmessage = WebsocketOnMessage
-
-
-                chatSocket.onopen = function(e) {
-                    chatSocket.send(JSON.stringify({
-                        'username': userName
-                    }));
-                };
-                console.log(chatSocket)
-            }
-            //document.querySelector('#searchbox').value = ""
-
-
-        });
+        window.jQuery || document.write('<script src="../assets/js/vendor/jquery.slim.min.js"><\/script>')
     </script>
 
+    <script src="{% static 'js\player.js' %}"></script>
 
 
-    <script>
-        WebsocketOnMessage = function(e) {
-            const data = JSON.parse(e.data);
-            if (playerReady) {
-                if (data.seekTo) {
-                    if (data.playerstate === "play") {
-                        setTimeout(function() {
-                            player.seekTo(data.seekTo - 0.5, true)
-                            player.playVideo()
-                        }, 500);
-
-
-
-                    } else if (data.playerstate === "pause") {
-                        setTimeout(function() {
-                            player.seekTo(data.seekTo - 0.5, true)
-                            player.pauseVideo()
-                            IsPlaying = false
-                        }, 500);
-
-
-
-                    }
-                    console.log("seeking, player ready")
-                }
-            } else {
-                if (data.seekTo) {
-                    console.log("player wasnt ready")
-                    seektime = data.seekTo
-                }
-
-            }
-            if (data.message) {
-                console.log("message called")
-                document.querySelector('#chat-log').innerHTML +=
-                    '<div  class="direct-chat-msg left">' +
-                    '<div class="direct-chat-info clearfix">' +
-                    '<span class="direct-chat-name pull-left"><b>' + data.username + '</b></span>' +
-                    '<span class="direct-chat-timestamp pull-right"> </span>' +
-                    '</div>' +
-                    '<img class="direct-chat-img" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="message user image">' +
-                    '<div class="direct-chat-text">' + data.message + '</div>' +
-                    '</div>'
-                updateScroll()
-            }
-            if (data.new_user) {
-                document.querySelector('#chat-log').innerHTML +=
-                    '<div  class="direct-chat-msg left">' +
-                    '<div class="direct-chat-info clearfix">' +
-                    '<div class="direct-chat-text">' + data.new_user + ' joined the room.' + '</div>' +
-                    '</div>'
-                updateScroll()
-
-            }
-            if (data.action === 'pause') {
-
-                if (IsPlaying === true) {
-
-                    player.pauseVideo()
-                }
-
-            };
-            if (data.action === 'load_video') {
-                player.loadVideoById(data.data, 1, "default")
-                console.log("called load video")
-                setTimeout(function() {
-                    player.seekTo(0, true)
-                }, 500)
-            };
-            if (data.current_video) {
-                if (playerReady) {
-                    console.log("video is set")
-                    player.loadVideoById(data.current_video, 1, "default")
-                    player.playVideo()
-                } else {
-                    load_id = data.current_video
-
-                }
-            };
-            if (data.action === 'play') {
-
-                if (IsPlaying === false) {
-
-                    player.playVideo()
-                }
-            }
-
-
-
-            if (data.action === 'seek') {
-                if (data.current_time) {
-                    console.log("called" + data.current_time)
-                    console.log(data.current_time)
-                    date = new Date()
-                    time = date.getTime() / 1000
-                    videoLastStartTime = time
-                    isSeeking = true
-                    player.seekTo(data.current_time, true)
-                    expectedRunTime = data.current_time
-
-                    function waitseek() {
-                        if (data.current_time == player.getCurrentTime()) {
-                            isSeeking = false
-                            console.log("finished seeking")
-                            clearInterval(CheckingSeek)
-                        }
-
-                    }
-
-                    CheckingSeek = setInterval(waitseek, 100)
-
-                } else {
-
-                }
-            };
-            if (data.action === "give_time") {
-                console.log("give_time")
-                chatSocket.send(JSON.stringify({
-                    'new_user_time': player.getCurrentTime()
-                }));
-
-            } else {
-
-            }
-
-
-        };
-
-
-
-
-        chatSocket.onclose = function(e) {
-            console.log("WebSocket is closed now.");
-        };
-
-
-
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
-        };
-
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) { // enter, return
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
-
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
-        };
-
-        function updateScroll() {
-            var element = document.getElementById("chat-log");
-            element.scrollTop = element.scrollHeight;
-        };
-    </script>
+</body>
 
 
 
 
 
-    <!-- Player -->
-    <style>
-        #player {
-            z-index: 0;
-            position: absolute;
-        }
-        
-        #player-controls {
-            z-index: 1;
-            position: absolute;
-            width: 1280px;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-        }
-    </style>
-
-
-
-
-
-    <!-- Player slider -->
-    <style>
-        .slidecontainer {
-            width: 100%;
-            /* Width of the outside container */
-        }
-        /* The slider itself */
-        
-        .slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 15px;
-            border-radius: 5px;
-            background: #d3d3d3;
-            outline: none;
-            opacity: 0.7;
-            -webkit-transition: .2s;
-            transition: opacity .2s;
-        }
-        
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: #4CAF50;
-            cursor: pointer;
-        }
-        
-        .slider::-moz-range-thumb {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: #4CAF50;
-            cursor: pointer;
-        }
-    </style>
-
-
-    <style>
-        .page-container {
-            min-height: 600px;
-            opacity: 0.5;
-        }
-        
-        .card-body {
-            min-height: 600px;
-            background: #333;
-        }
-        
-        .card .card-footer {}
-        
-        #playlist {
-            min-height: 600px;
-        }
-        
-        #input {
-            min-height: 10px;
-        }
-        
-        body {
-            background: #17202b;
-        }
-        
-        .card .card-header {
-            background: #333;
-            border: 0;
-            font-size: 1rem;
-            padding: .65rem 1rem;
-            position: relative;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .scroll {
-            max-height: 100px;
-            overflow-y: auto;
-        }
-    </style>
-    <style>
-        .stretch-card>.card {
-            width: 100%;
-            min-width: 100%
-        }
-        
-        body {
-            background-color: #333
-        }
-        
-        .flex {
-            -webkit-box-flex: 1;
-            -ms-flex: 1 1 auto;
-            flex: 1 1 auto
-        }
-        
-        @media (max-width:991.98px) {
-            .padding {
-                padding: 0
-            }
-        }
-        
-        @media (max-width:767.98px) {
-            .padding {
-                padding: 0
-            }
-        }
-        
-        .padding {
-            padding: 0
-        }
-        
-        .box.box-warning {
-            border-top-color: #333
-        }
-        
-        .box {
-            position: relative;
-            border-radius: 3px;
-            background: #333;
-            border-top: 3px solid #d2d6de;
-            margin-bottom: 20px;
-            width: 100%;
-            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1)
-        }
-        
-        .box-header.with-border {
-            border-bottom: 1px solid #333
-        }
-        
-        .box-header.with-border {
-            border-bottom: 1px solid #333
-        }
-        
-        .box-header {
-            color: #444;
-            display: block;
-            padding: 10px;
-            position: relative
-        }
-        
-        .box-header:before,
-        .box-body:before,
-        .box-footer:before,
-        .box-header:after,
-        .box-body:after,
-        .box-footer:after {
-            content: "";
-            display: table
-        }
-        
-        .box-header {
-            color: #444;
-            display: block;
-            padding: 10px;
-            position: relative
-        }
-        
-        .box-header>.fa,
-        .box-header>.glyphicon,
-        .box-header>.ion,
-        .box-header .box-title {
-            display: inline-block;
-            font-size: 18px;
-            margin: 0;
-            line-height: 1
-        }
-        
-        .box-header>.box-tools {
-            position: absolute;
-            right: 10px;
-            top: 5px
-        }
-        
-        .box-header>.box-tools [data-toggle="tooltip"] {
-            position: relative
-        }
-        
-        .bg-yellow,
-        .callout.callout-warning,
-        .alert-warning,
-        .label-warning,
-        .modal-warning .modal-body {
-            background-color: #57060652 !important
-        }
-        
-        .bg-yellow {
-            color: #333 !important
-        }
-        
-        .btn {
-            border-radius: 3px;
-            -webkit-box-shadow: none;
-            box-shadow: none;
-            border: 1px solid transparent
-        }
-        
-        .btn-box-tool {
-            padding: 5px;
-            font-size: 12px;
-            background: transparent;
-            color: #97a0b3
-        }
-        
-        .direct-chat .box-body {
-            border-bottom-right-radius: 0;
-            border-bottom-left-radius: 0;
-            position: relative;
-            overflow-x: hidden;
-            padding: 0
-        }
-        
-        .box-body {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 3px;
-            border-bottom-left-radius: 3px;
-            padding: 10px
-        }
-        
-        .box-header:before,
-        .box-body:before,
-        .box-footer:before,
-        .box-header:after,
-        .box-body:after,
-        .box-footer:after {
-            content: "";
-            display: table
-        }
-        
-        .direct-chat-messages {
-            -webkit-transform: translate(0, 0);
-            -ms-transform: translate(0, 0);
-            -o-transform: translate(0, 0);
-            transform: translate(0, 0);
-            padding: 10px;
-            height: 250px;
-            overflow: auto
-        }
-        
-        .direct-chat-messages,
-        .direct-chat-contacts {
-            -webkit-transition: -webkit-transform .5s ease-in-out;
-            -moz-transition: -moz-transform .5s ease-in-out;
-            -o-transition: -o-transform .5s ease-in-out;
-            transition: transform .5s ease-in-out
-        }
-        
-        .direct-chat-msg {
-            margin-bottom: 10px
-        }
-        
-        .direct-chat-msg,
-        .direct-chat-text {
-            display: block
-        }
-        
-        .direct-chat-info {
-            display: block;
-            margin-bottom: 2px;
-            font-size: 12px
-        }
-        
-        .direct-chat-timestamp {
-            color: rgb(255, 255, 255)
-        }
-        
-        .btn-group-vertical>.btn-group:after,
-        .btn-group-vertical>.btn-group:before,
-        .btn-toolbar:after,
-        .btn-toolbar:before,
-        .clearfix:after,
-        .clearfix:before,
-        .container-fluid:after,
-        .container-fluid:before,
-        .container:after,
-        .container:before,
-        .dl-horizontal dd:after,
-        .dl-horizontal dd:before,
-        .form-horizontal .form-group:after,
-        .form-horizontal .form-group:before,
-        .modal-footer:after,
-        .modal-footer:before,
-        .modal-header:after,
-        .modal-header:before,
-        .nav:after,
-        .nav:before,
-        .navbar-collapse:after,
-        .navbar-collapse:before,
-        .navbar-header:after,
-        .navbar-header:before,
-        .navbar:after,
-        .navbar:before,
-        .pager:after,
-        .pager:before,
-        .panel-body:after,
-        .panel-body:before,
-        .row:after,
-        .row:before {
-            display: table;
-            content: ""
-        }
-        
-        .direct-chat-img {
-            border-radius: 50%;
-            float: left;
-            width: 40px;
-            height: 40px
-        }
-        
-        .direct-chat-text {
-            border-radius: 5px;
-            position: relative;
-            padding: 5px 10px;
-            background: rgb(255, 255, 255, 0.2);
-            border: 1px solid rgb(255, 255, 255, 0.2);
-            margin: 5px 0 0 50px;
-            color: rgba(0, 0, 0, 0.356)
-        }
-        
-        .direct-chat-msg,
-        .direct-chat-text {
-            display: block
-        }
-        
-        .direct-chat-text:before {
-            border-width: 6px;
-            margin-top: -6px
-        }
-        
-        .direct-chat-text:after,
-        .direct-chat-text:before {
-            position: absolute;
-            right: 100%;
-            top: 15px;
-            border: solid transparent;
-            border-right-color: #d2d6de;
-            content: ' ';
-            height: 0;
-            width: 0;
-            pointer-events: none
-        }
-        
-        .direct-chat-text:after {
-            border-width: 5px;
-            margin-top: -5px
-        }
-        
-        .direct-chat-text:after,
-        .direct-chat-text:before {
-            position: absolute;
-            right: 100%;
-            top: 15px;
-            border: solid transparent;
-            border-right-color: #d2d6de;
-            content: ' ';
-            height: 0;
-            width: 0;
-            pointer-events: none
-        }
-        
-         :after,
-         :before {
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box
-        }
-        
-        .direct-chat-msg:after {
-            clear: both
-        }
-        
-        .direct-chat-msg:after {
-            content: "";
-            display: table
-        }
-        
-        .direct-chat-info {
-            display: block;
-            margin-bottom: 2px;
-            font-size: 12px
-        }
-        
-        .right .direct-chat-img {
-            float: right
-        }
-        
-        .direct-chat-warning .right>.direct-chat-text {
-            background: #f39c12;
-            border-color: #f39c12;
-            color: #fff
-        }
-        
-        .right .direct-chat-text {
-            margin-right: 50px;
-            margin-left: 0
-        }
-        
-        .box-footer {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 3px;
-            border-bottom-left-radius: 3px;
-            border-top: 1px solid #f3;
-            padding: 10px;
-            background-color: #333
-        }
-        
-        .box-header:before,
-        .box-body:before,
-        .box-footer:before,
-        .box-header:after,
-        .box-body:after,
-        .box-footer:after {
-            content: "";
-            display: table
-        }
-        
-        .input-group-btn {
-            position: relative;
-            font-size: 0;
-            white-space: nowrap
-        }
-        
-        .input-group-btn:last-child>.btn,
-        .input-group-btn:last-child>.btn-group {
-            z-index: 2;
-            margin-left: -1px
-        }
-        
-        .btn-warning {
-            color: #fff;
-            background-color: #0000008a;
-            border-color: #333
-        }
-        
-        #searchbox {
-            color: #fff;
-            background-color: #0000008a;
-            border-color: #333
-        }
-    </style>
-
-
-
-    <style>
-        body {
-            height: 100%;
-            background-color: #333;
-        }
-        
-        .modal-backdrop {
-            background-color: #333;
-            opacity: 1 !important;
-        }
-    </style>
+</html>
