@@ -226,6 +226,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def action(self, event):
         action = event['action']
+        room = rooms[self.room_group_name]
         if action == "play" or action == "pause":
             if 'current_time' in event:
                 data = event['current_time']
@@ -262,7 +263,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 title = response.json()['title']
             else:
                 title = ""
-
+            room.add_to_playlist({"video_id":video_id, "title":title})
+            print(room.playlist)
             await self.send(text_data=json.dumps({
                 'action': action,
                 'video': [video_id,title],
