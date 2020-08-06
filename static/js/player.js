@@ -166,7 +166,7 @@ $("#AddToPlaylist").on("click", function() {
     video_id = YouTubeGetID(url)
     document.querySelector('#searchbox').value = ""
     chatSocket.send(JSON.stringify({
-        'action': "add_to_playlist",
+        'action': "addToPlaylist",
         'data': video_id
     }));
 });
@@ -176,7 +176,25 @@ $("#AddToPlaylist").on("click", function() {
 
 $(document).ready(function() {
     $('#exampleModal').modal('show');
+
 });
+
+$("#inviteToRoom").on("click", function() {
+
+    var UrlHolder = document.createElement("input")
+    roomURL = window.location.host + "/room/" + room_name
+
+    document.body.appendChild(urlHolder);
+    urlHolder.value = roomURL;
+    urlHolder.select();
+    document.execCommand('copy');
+    document.body.removeChild(urlHolder);
+
+
+
+})
+
+
 
 $("#joinRoom").on("click", function() {
     console.log("before: " + userName)
@@ -239,13 +257,11 @@ WebsocketOnMessage = function(e) {
         }
     } else {
         if (data.seekTo) {
-            console.log("player wasnt ready")
             seektime = data.seekTo
         }
 
     }
     if (data.message) {
-        console.log("message called")
         document.querySelector('#chat-log').innerHTML +=
             '<li id="chat-msg">' +
             '<li style="font-family: italic; font-size: 13px; list-style-type: none;">' + data.username + ': </li>' +
@@ -294,9 +310,6 @@ WebsocketOnMessage = function(e) {
             player.playVideo()
         }
     }
-
-
-
     if (data.action === 'seek') {
         if (data.current_time) {
             console.log("called" + data.current_time)
@@ -328,6 +341,22 @@ WebsocketOnMessage = function(e) {
         chatSocket.send(JSON.stringify({
             'new_user_time': player.getCurrentTime()
         }));
+
+    } else {
+
+    }
+    if (data.action === "addToPlaylist") {
+        $('#vid-list').append(
+            '<div  class="vid-item">' +
+            '<div id=' + data.video_id + ' type="button" class="thumb">' +
+            '<img src="http://img.youtube.com/vi/' + data.video[0] + '/0.jpg">' +
+            '</div>' +
+            '<div class="desc">' +
+            data.video[1] +
+            '</div>' +
+            '</div>');
+
+
 
     } else {
 
@@ -367,18 +396,23 @@ function updateScroll() {
     element.scrollTop = element.scrollHeight;
 };
 
+document.querySelector('.thumb').click(function() {
+    alert("called")
+    alert(this.id); // or alert($(this).attr('id'));
+});
+
 //playlist shiz
 $(document).ready(function() {
     $(".arrow-right").bind("click", function(event) {
         event.preventDefault();
         $(".vid-list-container").stop().animate({
-            scrollLeft: "+=336"
+            scrollLeft: "+=148"
         }, 750);
     });
     $(".arrow-left").bind("click", function(event) {
         event.preventDefault();
         $(".vid-list-container").stop().animate({
-            scrollLeft: "-=336"
+            scrollLeft: "-=148"
         }, 750);
     });
 });

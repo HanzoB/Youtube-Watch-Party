@@ -60,13 +60,13 @@
  
  .navbar {
      box-shadow: rgba(82, 24, 158, 0.6) -5px 0px 10px;
-     background: #191919;
+     background-color: rgba(0, 0, 0, 0.253);
      border-radius: 2px;
  }
  
  .panel {
      box-shadow: rgba(0, 0, 0, 0.6) -5px 0px 10px;
-     background: #191919;
+     background-color: rgba(0, 0, 0, 0.253);
      border-radius: 15px;
      margin-bottom: 10px !important;
      margin-top: 30px !important;
@@ -83,7 +83,7 @@
  
  #ChatSideBar {
      box-shadow: rgba(0, 0, 0, 0.6) -5px 0px 10px;
-     background: #191919;
+     background-color: rgba(0, 0, 0, 0.253);
      color: white;
      max-height: 600px;
      min-height: 600px;
@@ -210,6 +210,7 @@
  }
  
  .vid-list-container {
+     background-color: rgba(0, 0, 0, 0.253);
      width: 92%;
      overflow: hidden;
      margin-top: 20px;
@@ -218,7 +219,8 @@
  }
  
  .vid-list {
-     width: 1344px;
+     width: 1344000px;
+     height: 150px;
      position: relative;
      top: 0;
      left: 0;

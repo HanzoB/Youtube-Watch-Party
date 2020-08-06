@@ -2,11 +2,13 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 import random
 import datetime
+import requests
 
 from syncpin.settings import YOUTUBE_API_KEY
 
 # {roomid:{'host':'first user in room';,room_users:[],'current_video': '' ,playlist:[]}}
 rooms = {}
+
 
 
 class Room:
@@ -64,7 +66,8 @@ class Room:
         self.playlist.remove(video_id)
 
     def room_info(self):
-        return "Room_ID: %s \n Room_host: %s \n room_users: %s " % (self.room_id, self.room_host, self.room_users)
+        room_info = {"id":self.room_id,"host":self.host,"room_users":self.room_users}
+        return room_info
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -129,7 +132,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             print("Connected: ")
             print(room.room_users)
 
-        if 'message' in text_data_json:
+        elif 'message' in text_data_json:
             message = text_data_json['message']
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -169,6 +172,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                         }
                     )
+                elif action =="addToPlaylist":
+                    await self.channel_layer.group_send(
+                        self.room_group_name,
+                        {
+                            'type': 'action',
+                            'action': action,
+                            'data': data,
+                            'username': self.user.username,
+
+
+                        }
+                    )
                 else:
                     room.curr_video(data)
                     await self.channel_layer.group_send(
@@ -183,17 +198,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     )
 
             else:
-                room.SetPlayerState(action)
-                await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'action',
-                        'action': action,
-                        'username': self.user.username,
+                if action == "pause" or action == "play":
+                    room.SetPlayerState(action)
+                    await self.channel_layer.group_send(
+                        self.room_group_name,
+                        {
+                            'type': 'action',
+                            'action': action,
+                            'username': self.user.username,
 
 
-                    }
-                )
+                        }
+                    )
+                
+
+                
 
     # Receive message from room group
 
@@ -209,10 +228,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         action = event['action']
         if action == "play" or action == "pause":
             if 'current_time' in event:
-                print("is this even tried?")
                 data = event['current_time']
                 username = event['username']
-                print("Pause/Play Initiator: " + username)
                 if self.user.username != username:
                     await self.send(text_data=json.dumps({
                         'action': action,
@@ -221,7 +238,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             else:
                 username = event['username']
-                print("Pause/Play Initiator: " + username)
                 if self.user.username != username:
                     await self.send(text_data=json.dumps({
                         'action': action,
@@ -236,6 +252,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'action': action,
                 'data': data,
             }))
+        elif action == "addToPlaylist":
+            username = event['username']
+            video_id = event['data']
+            response = requests.get('http://noembed.com/embed?url=https://www.youtube.com/watch?v=' + video_id ) 
+
+
+            if "title" in response.json():
+                title = response.json()['title']
+            else:
+                title = ""
+
+            await self.send(text_data=json.dumps({
+                'action': action,
+                'video': [video_id,title],
+                'username':username,
+            }))
+
+
             
         elif action == "seek":
 
