@@ -6,6 +6,7 @@ import requests
 
 
 
+
 # {roomid:{'host':'first user in room';,room_users:[],'current_video': '' ,playlist:[]}}
 rooms = {}
 
@@ -97,7 +98,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'action',
-                        'action': "give_time"
+                'action': "give_time"
 
             })
 
@@ -113,8 +114,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if len(room.room_users) == 1:
             room.room_host = username[0]
 
-        print("Disconnected: ")
-        print(room.room_users)
+       
 
     # Receive message from WebSocket
 
@@ -305,15 +305,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def NewUserTime(self, event):
         new_user_time = event['new_user_time']
-        print(str(new_user_time) + "is the time for new usesssr")
+
         # Send message to WebSocket
         room = rooms[self.room_group_name]
-        print("user: " + self.user.username +
-              " last_user: " + room.room_users[-1])
         if self.user.username == room.room_users[-1]:
             await self.send(text_data=json.dumps({
                 'seekTo': new_user_time,
-                'playerstate': room.GetPlayerState()}))
+                'playerstate': room.GetPlayerState(),
+                'playlist'   : room.playlist}))
         if self.user.username != room.room_users[-1]:
             await self.send(text_data=json.dumps({
                 'new_user': room.room_users[-1].split("_")[0], }))

@@ -257,6 +257,11 @@ WebsocketOnMessage = function(e) {
         }
 
     }
+    if (data.playlist) {
+        console.log(data.playlist)
+
+
+    }
     if (data.message) {
         document.querySelector('#chat-log').innerHTML +=
             '<li id="chat-msg">' +
@@ -339,12 +344,11 @@ WebsocketOnMessage = function(e) {
             'new_user_time': player.getCurrentTime()
         }));
 
-    } else {
 
     }
     if (data.action === "addToPlaylist") {
         $('#vid-list').append(
-            '<div  class="vid-item">' +
+            '<div  class=" container vid-item">' +
             '<i class="closeFont fa fa-times"></i>' +
             '<i type="button" id=' + data.video[0] + ' onclick="loadVideoPlaylist(this.id)"  class=" playFont fa fa-play-circle-o"></i>' +
             '<div  class="thumb">' +
@@ -354,8 +358,6 @@ WebsocketOnMessage = function(e) {
             data.video[1] +
             '</div>' +
             '</div>');
-    } else {
-
     }
 
 
@@ -400,6 +402,15 @@ function loadVideo(videoID) {
 
 function loadVideoPlaylist(videoID) {
     player.loadVideoById(videoID, 1, "default")
+    chatSocket.send(JSON.stringify({
+
+        'action': 'give_title',
+        'videoID': videoID
+    }));
+    chatSocket.send(JSON.stringify({
+        'action': "load_video",
+        'data': videoID
+    }));
 }
 
 
