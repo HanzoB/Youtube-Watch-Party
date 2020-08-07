@@ -226,6 +226,28 @@
      left: 0;
  }
  
+ marquee {
+     white-space: nowrap;
+ }
+ 
+ .playFont {
+     z-index: 100;
+     color: grey;
+     font-size: 50px;
+     position: absolute;
+     left: 50px;
+     top: 27px;
+ }
+ 
+ .closeFont {
+     z-index: 100;
+     color: red;
+     font-size: 20px;
+     position: absolute;
+     right: 0px;
+     top: 0px;
+ }
+ 
  .vid-item {
      display: block;
      width: 148px;

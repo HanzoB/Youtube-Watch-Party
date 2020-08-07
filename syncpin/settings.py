@@ -138,4 +138,3 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, "assets")
 
-YOUTUBE_API_KEY = "AIzaSyAlMwhpJfKl7yQx_PlztAoPr08QUehPNbQ"

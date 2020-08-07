@@ -202,15 +202,11 @@ $("#joinRoom").on("click", function() {
     console.log("after: " + userName)
     if (userName != "") {
         $('#exampleModal').modal('hide');
-        alert("called")
         chatSocket = new WebSocket(
             'ws://' +
             window.location.host +
             '/ws/room/' +
             room_name
-
-
-
         );
         chatSocket.onmessage = WebsocketOnMessage
 
@@ -287,16 +283,17 @@ WebsocketOnMessage = function(e) {
 
     };
     if (data.action === 'load_video') {
-        player.loadVideoById(data.data, 1, "default")
+        loadVideo(data.data)
         console.log("called load video")
         setTimeout(function() {
             player.seekTo(0, true)
         }, 500)
     };
+
     if (data.current_video) {
         if (playerReady) {
             console.log("video is set")
-            player.loadVideoById(data.current_video, 1, "default")
+            loadVideo(data.current_video)
             player.playVideo()
         } else {
             load_id = data.current_video
@@ -348,16 +345,15 @@ WebsocketOnMessage = function(e) {
     if (data.action === "addToPlaylist") {
         $('#vid-list').append(
             '<div  class="vid-item">' +
-            '<div id=' + data.video_id + ' type="button" class="thumb">' +
-            '<img src="http://img.youtube.com/vi/' + data.video[0] + '/0.jpg">' +
+            '<i class="closeFont fa fa-times"></i>' +
+            '<i type="button" id=' + data.video[0] + ' onclick="loadVideoPlaylist(this.id)"  class=" playFont fa fa-play-circle-o"></i>' +
+            '<div  class="thumb">' +
+            '<img  src="http://img.youtube.com/vi/' + data.video[0] + '/0.jpg">' +
             '</div>' +
             '<div class="desc">' +
             data.video[1] +
             '</div>' +
             '</div>');
-
-
-
     } else {
 
     }
@@ -392,16 +388,24 @@ document.querySelector('#chat-message-input').onkeyup = function(e) {
 
 
 function updateScroll() {
+
     var element = document.getElementById("chat-log");
     element.scrollTop = element.scrollHeight;
+
 };
 
-document.querySelector('.thumb').click(function() {
-    alert("called")
-    alert(this.id); // or alert($(this).attr('id'));
-});
+function loadVideo(videoID) {
+    player.loadVideoById(videoID, 1, "default")
+}
 
-//playlist shiz
+function loadVideoPlaylist(videoID) {
+    player.loadVideoById(videoID, 1, "default")
+}
+
+
+
+
+
 $(document).ready(function() {
     $(".arrow-right").bind("click", function(event) {
         event.preventDefault();

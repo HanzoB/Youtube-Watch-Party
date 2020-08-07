@@ -4,7 +4,7 @@ import random
 import datetime
 import requests
 
-from syncpin.settings import YOUTUBE_API_KEY
+
 
 # {roomid:{'host':'first user in room';,room_users:[],'current_video': '' ,playlist:[]}}
 rooms = {}
