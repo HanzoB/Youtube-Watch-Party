@@ -11,7 +11,7 @@ import requests
 rooms = {}
 
 
-
+#room.py
 class Room:
 
     def __init__(self):
@@ -93,26 +93,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
         await self.accept()
         # Send message to room group
-        await self.send(text_data=json.dumps(room.__dict__))
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'action',
-                'action': "give_time"
-
-            })
+        
+         
 
     async def disconnect(self, close_code):
         # Leave room group
+        room = rooms[self.room_group_name]
+        room.remove_user(self.user.username) 
+        await self.channel_layer.group_send(
+            self.room_group_name,
+                {
+                    'type': 'action',
+                    'action': "users_count",})
+        await self.send(text_data=json.dumps(room.__dict__))
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name,
         )
-        room = rooms[self.room_group_name]
-        room.remove_user(self.user.username)
-        username = self.user.username
-        if len(room.room_users) == 1:
-            room.room_host = username[0]
+        
 
        
 
@@ -126,11 +124,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
             username = self.user.username = text_data_json['username'] + "_" + str(
                 random.randint(0, 1000000))
             room = rooms[self.room_group_name]
-            if len(room.room_users) == 1:
+            if len(room.room_users) == 0:
                 room.room_host = username
             room.add_user(username)
             print("Connected: ")
             print(room.room_users)
+            await self.send(text_data=json.dumps(room.__dict__))
+            await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'action',
+                'action': "give_time",
+
+            })
+            await self.channel_layer.group_send(
+            self.room_group_name,
+                {
+                    'type': 'action',
+                    'action': "users_count",}) 
 
         elif 'message' in text_data_json:
             message = text_data_json['message']
@@ -264,15 +275,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             else:
                 title = ""
             room.add_to_playlist({"video_id":video_id, "title":title})
-            print(room.playlist)
             await self.send(text_data=json.dumps({
                 'action': action,
                 'video': [video_id,title],
                 'username':username,
-            }))
-
-
-            
+            }))  
         elif action == "seek":
 
             data = event['data']
@@ -288,7 +295,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         elif action == "give_time":
             room = rooms[self.room_group_name]
-            print("room len: " + str(len(room.room_users)))
             if len(room.room_users) > 0:
                 print("last guy: " +
                       room.room_users[-1] + "self: " + self.user.username)
@@ -296,6 +302,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     await self.send(text_data=json.dumps({
                         'action': "give_time",
                     }))
+        elif action == "users_count":
+            room = rooms[self.room_group_name]
+            if self.user.username == room.room_users[0]:
+                await self.send(text_data=json.dumps({
+                    'room_users': room.room_users,
+                }))
 
         else:
                 # Send message to WebSocket
@@ -309,10 +321,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Send message to WebSocket
         room = rooms[self.room_group_name]
         if self.user.username == room.room_users[-1]:
+            print("sending playlist")
             await self.send(text_data=json.dumps({
                 'seekTo': new_user_time,
-                'playerstate': room.GetPlayerState(),
-                'playlist'   : room.playlist}))
+                'playerstate': room.GetPlayerState()}))
+
         if self.user.username != room.room_users[-1]:
             await self.send(text_data=json.dumps({
                 'new_user': room.room_users[-1].split("_")[0], }))

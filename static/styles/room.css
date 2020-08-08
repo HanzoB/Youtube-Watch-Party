@@ -60,7 +60,7 @@
  
  .navbar {
      box-shadow: rgba(82, 24, 158, 0.6) -5px 0px 10px;
-     background-color: rgba(0, 0, 0, 0.253);
+     background-color: rgba(0, 0, 0, 0.2);
      border-radius: 2px;
  }
  
@@ -81,31 +81,50 @@
      text-align: start;
  }
  
+ .Chat {
+     height: 20px;
+     position: absolute;
+ }
+ 
  #ChatSideBar {
+     padding-top: 20px;
      box-shadow: rgba(0, 0, 0, 0.6) -5px 0px 10px;
      background-color: rgba(0, 0, 0, 0.253);
      color: white;
-     max-height: 600px;
-     min-height: 600px;
-     display: flex;
+     height: 100%;
+     max-width: 100%;
+     width: 100%;
      justify-content: flex-end;
      flex-direction: column;
+ }
+ 
+ #chat-message-input:focus {
+     outline-width: 0px;
  }
  
  #chat-message-input {
      font-family: 'Poppins', sans-serif;
      font-size: 13px;
      background: none;
-     border-radius: 20px;
+     border: none;
      color: white;
+     border-bottom: 1px solid white;
      max-width: 95%;
+     width: 100%;
+ }
+ 
+ .input-group:focus {
+     color: white;
+     border-bottom: 1px solid white;
  }
  
  #chat-log {
-     padding-top: 20px;
-     max-height: 460px;
+     max-width: 95%;
+     width: 100%;
+     height: 470px;
      overflow-y: auto;
-     overflow-x: hidden;
+     word-wrap: break-word;
+     margin-left: 10px;
  }
  
  #chat-msg {
@@ -120,6 +139,7 @@
  }
  
  .container.mainContainer {
+     padding-top: 50px;
      max-width: 98%;
  }
  
@@ -188,7 +208,7 @@
  }
  
  .modal-backdrop {
-     background-color: #191919 !important;
+     background-color: #212529 !important;
      opacity: 1.0 !important;
  }
  
@@ -211,10 +231,9 @@
  
  .vid-list-container {
      background-color: rgba(0, 0, 0, 0.253);
-     width: 92%;
+     width: 100%;
      overflow: hidden;
      margin-top: 20px;
-     margin-left: 4%;
      padding-bottom: 20px;
  }
  
@@ -236,8 +255,8 @@
      font-size: 50px;
      position: absolute;
      display: inline-block;
-     left: 65px;
-     top: 50px;
+     left: 53px;
+     top: 20px;
  }
  
  .closeFont {
@@ -245,8 +264,8 @@
      color: red;
      font-size: 20px;
      position: absolute;
-     left: 65px;
-     top: 50px;
+     left: 130px;
+     top: 0px;
      display: inline-block;
  }
  
@@ -288,8 +307,8 @@
      position: absolute;
      background: rgba(255, 255, 255, .1);
      padding: 15px;
-     left: -25px;
-     top: -130px;
+     left: -15px;
+     top: -115px;
      z-index: 99;
      cursor: pointer;
  }
@@ -299,8 +318,8 @@
      position: absolute;
      background: rgba(255, 255, 255, .1);
      padding: 15px;
-     right: -25px;
-     top: -130px;
+     right: -15px;
+     top: -115px;
      z-index: 100;
      cursor: pointer;
  }
@@ -312,11 +331,23 @@
          width: 96px;
      }
      .arrow-left {
-         left: 0;
-         top: -20px;
+         left: -165px;
+         top: -115px;
      }
      .arrow-right {
-         right: 0;
-         top: -20px;
+         right: -165px;
+         top: -115px;
+     }
+ }
+ 
+ @media (max-width: 624px) {
+     #chat-log {
+         min-height: 102px;
+         height: 102px;
+     }
+     #ChatSideBar {
+         margin-top: 30px;
+         margin-right: 15px;
+         margin-left: 15px
      }
  }

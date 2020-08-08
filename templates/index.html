@@ -17,16 +17,16 @@
 
 
     <!-- Custom styles for this template -->
-    <link href="{% static 'room.css' %}" rel="stylesheet">
+    <link href="{% static 'styles/room.css' %}" rel="stylesheet">
     <style>
         @font-face {
             font-family: 'LogoFont';
-            src: url("{% static 'Aquire-BW0ox.otf' %}") format("opentype");
+            src: url("{% static 'fonts/Aquire-BW0ox.otf' %}") format("opentype");
         }
         
         @font-face {
             font-family: 'Funky';
-            src: url("{% static 'funky.ttf' %}") format("opentype");
+            src: url("{% static 'fonts/funky.ttf' %}") format("opentype");
         }
     </style>
 </head>
@@ -50,14 +50,14 @@
     </div>
 
     <nav class="navbar navbar-dark sticky-top  flex-md-nowrap p-0 shadow">
-        <a class=" col-md-3 col-lg-2 mr-0 px-3" href="#" style="font-family: LogoFont; font-size: 20px; color:white;">SyncPin</a>
-        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-        <input id="searchbox" style="border-radius: 25px;" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+        <a class=" col-md-3 col-lg-2 mr-0 px-3" href="/" style="font-family: LogoFont; font-size: 20px; color:white;">SyncPin</a>
+
+
+        </button>
+        <input id="searchbox" style="border-radius: 25px;" class="form-control form-control-dark w-100" type="text" placeholder="Youtube URL" aria-label="Youtube URL">
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
-                <a id="loadvideo" class="nav-link" type="button"><i style="color:white;" class="fa fa-play"></i></a>
+                <a id="loadvideo" class="nav-link" type="button"><i style="color:white; padding-left: 15px;" class="fa fa-play"></i></a>
             </li>
         </ul>
         <ul class="navbar-nav px-3">
@@ -69,39 +69,8 @@
 
     <div class="container mainContainer">
 
-        <div class="row">
-
-            <div class="col-sm-9">
-                <div class=" panel panel default ">
-                    <div class="panel-body">
 
 
-                        <ul>
-
-                            <li>
-                                <div id="currentlyPlaying">
-
-                                    <marquee>
-
-                                        <p style="color:green; font-size: 25px;">
-                                            Spot the differeddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddnce</p>
-
-
-
-                                    </marquee>
-
-
-                                </div>
-
-                            </li>
-
-
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
-        </div>
         <div class="row">
 
 
@@ -112,35 +81,22 @@
                     <div id="player"></div>
                 </div>
                 <!-- playlist-->
-                <div class="col-sm-12">
-                    <div class="vid-list-container">
-                        <div id="vid-list" class="vid-list">
-                        </div>
-                    </div>
-                    <div class="arrows">
-                        <div class="arrow-left">
-                            <i class="fa fa-chevron-left fa-lg"></i>
-                        </div>
-                        <div class="arrow-right">
-                            <i class="fa fa-chevron-right fa-lg"></i>
-                        </div>
-                    </div>
-                </div>
+
 
 
             </div>
-            <div style="border-radius: 15px;" id="ChatSideBar" class="col-sm-3 ">
-
+            <div id="ChatSideBar" class="col-md-3">
                 <div class="row">
 
+                    <p style="color:white; top:0px;  padding-right:20px; padding-left:20px; font-size:17px"><i type="button" id="inviteToRoom" class="fa fa-link"></i></p>
 
-                    <h1 style="color:white; float:right" class="h2"><i class="fa fa-users"><a  style="color:green; font-size: 25px;">  18</a>
-                        <h1 class="h2" style="color:white; top:0px"><i type="button" id="inviteToRoom" class="fa fa-link"></i>
+                    <p style="color:white; float:right; font-size:17px"><i class="fa fa-users floatright"><a id="roomUsers" style="color:green; font-size: 20px; padding-right:20px; font-family: 'Poppins', sans-serif;    "> </a></i></p>
+
+
 
 
 
                 </div>
-
 
                 <div class="row">
                     <div id="chat-log" class="col-sm-12">
@@ -153,8 +109,8 @@
 
 
                 <div class=row>
-                    <div id="chatContainer" class="input-group col-sm-12">
-                        <input id="chat-message-input" style="border-radius: 15px;" class="form-control " type="text" placeholder="Search" aria-label="Search">
+                    <div id="chatContainer" class="col-sm-12">
+                        <input id="chat-message-input" type="text" placeholder="Type a message..." aria-label="Type a message...">
 
                     </div>
 
@@ -165,7 +121,22 @@
 
         </div>
 
-
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="vid-list-container">
+                    <div id="vid-list" class="vid-list">
+                    </div>
+                </div>
+                <div class="arrows">
+                    <div class="arrow-left">
+                        <i class="fa fa-chevron-left fa-lg"></i>
+                    </div>
+                    <div class="arrow-right">
+                        <i class="fa fa-chevron-right fa-lg"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
     <script>

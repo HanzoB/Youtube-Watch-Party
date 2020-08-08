@@ -24,6 +24,7 @@ function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         height: '390',
         width: '640',
+        videoId: 'HLEn5MyXUfE',
         playerVars: {
             'autoplay': 0,
             'controls': 1,
@@ -181,7 +182,7 @@ $(document).ready(function() {
 
 $("#inviteToRoom").on("click", function() {
 
-    var UrlHolder = document.createElement("input")
+    var urlHolder = document.createElement("input")
     roomURL = window.location.host + "/room/" + room_name
 
     document.body.appendChild(urlHolder);
@@ -225,8 +226,6 @@ $("#joinRoom").on("click", function() {
 
 
 
-
-
 WebsocketOnMessage = function(e) {
     const data = JSON.parse(e.data);
     if (playerReady) {
@@ -257,8 +256,20 @@ WebsocketOnMessage = function(e) {
         }
 
     }
-    if (data.playlist) {
-        console.log(data.playlist)
+
+    if (data.room_users) {
+        console.log("roomusers")
+        if (document.getElementById('roomUsers').innerHTML.value != "") {
+            document.getElementById('roomUsers').innerHTML = "";
+        }
+
+        $("#roomUsers").append(" " + data.room_users.length)
+
+
+    }
+    if (data) {
+        console.log("dnasdsaddasdasdasdsa")
+
 
 
     }
@@ -297,7 +308,6 @@ WebsocketOnMessage = function(e) {
 
     if (data.current_video) {
         if (playerReady) {
-            console.log("video is set")
             loadVideo(data.current_video)
             player.playVideo()
         } else {
@@ -352,7 +362,7 @@ WebsocketOnMessage = function(e) {
             '<i class="closeFont fa fa-times"></i>' +
             '<i type="button" id=' + data.video[0] + ' onclick="loadVideoPlaylist(this.id)"  class=" playFont fa fa-play-circle-o"></i>' +
             '<div  class="thumb">' +
-            '<img  src="http://img.youtube.com/vi/' + data.video[0] + '/0.jpg">' +
+            '<img  src="https://img.youtube.com/vi/' + data.video[0] + '/0.jpg">' +
             '</div>' +
             '<div class="desc">' +
             data.video[1] +
