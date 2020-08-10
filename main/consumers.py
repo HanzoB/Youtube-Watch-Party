@@ -23,6 +23,7 @@ class Room:
         self.current_time = 0
         self.confirmation = 0
         self.state = ""
+        self.index = 0
 
     def curr_video(self, video):
         self.current_video = video
@@ -45,9 +46,6 @@ class Room:
         if len(self.room_users) == 0:
             return True
 
-    def confirmations(self):
-        return self.confirmation
-
     def SetPlayerState(self, state):
         self.state = state
 
@@ -60,11 +58,18 @@ class Room:
         else:
             return "Host exists"
 
-    def add_to_playlist(self, video_id):
-        self.playlist.append(video_id)
+    def add_to_playlist(self, videoID):
+        self.playlist.append(videoID)
+        print("append")
 
-    def remove_from_playlist(self, video_id):
-        self.playlist.remove(video_id)
+    def remove_from_playlist(self, videoID, index):
+        for i in range(len(self.playlist)):
+            if self.playlist[i]['video_id']  == videoID.split("_")[1] and str(i) == videoID.split("_")[2]:
+                del self.playlist[i]
+                print(self.playlist)
+                
+            break
+           
 
     def room_info(self):
         room_info = {"id":self.room_id,"host":self.host,"room_users":self.room_users}
@@ -110,6 +115,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name,
         )
+        if room.isEmpty:
+            del rooms[self.room_group_name]
         
 
        
@@ -183,7 +190,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                         }
                     )
-                elif action =="addToPlaylist":
+                elif action =="addToPlaylist" or action =="removeVideoPlaylist":
+                    print("are u called 2?")
                     await self.channel_layer.group_send(
                         self.room_group_name,
                         {
@@ -269,17 +277,28 @@ class ChatConsumer(AsyncWebsocketConsumer):
             video_id = event['data']
             response = requests.get('http://noembed.com/embed?url=https://www.youtube.com/watch?v=' + video_id ) 
 
-
-            if "title" in response.json():
-                title = response.json()['title']
-            else:
-                title = ""
-            room.add_to_playlist({"video_id":video_id, "title":title})
+            title = response.json()['title']
+            room.index = len(room.playlist)
+            room.add_to_playlist({"video_id":video_id, "title":title, "index": room.index})
+            print(room.playlist)
             await self.send(text_data=json.dumps({
                 'action': action,
                 'video': [video_id,title],
+                "index": room.index,
                 'username':username,
-            }))  
+            }))
+            
+        elif action =="removeVideoPlaylist":
+            username = event['username']
+            videoID=event['data']
+            room.remove_from_playlist(videoID,videoID.split("_")[2])
+            await self.send(text_data=json.dumps({
+                    'action': "removeFromPlaylist",
+                    'playlist': room.playlist,
+                }))
+            
+
+
         elif action == "seek":
 
             data = event['data']
@@ -304,10 +323,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     }))
         elif action == "users_count":
             room = rooms[self.room_group_name]
-            if self.user.username == room.room_users[0]:
-                await self.send(text_data=json.dumps({
+            await self.send(text_data=json.dumps({
                     'room_users': room.room_users,
                 }))
+                
 
         else:
                 # Send message to WebSocket

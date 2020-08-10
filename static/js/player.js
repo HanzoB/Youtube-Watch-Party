@@ -64,7 +64,7 @@ function onPlayerReady(event) {
         console.log("Actual player time:: " + player.getCurrentTime())
 
         if (isSeeking === false) {
-            if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 5) {
+            if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 1) {
                 chatSocket.send(JSON.stringify({
                     'action': "seek",
                     'data': player.getCurrentTime(),
@@ -267,8 +267,24 @@ WebsocketOnMessage = function(e) {
 
 
     }
-    if (data) {
-        console.log("dnasdsaddasdasdasdsa")
+    if (data.playlist) {
+        var i
+        document.querySelector('#vid-list').innerHTML = ""
+
+        for (i = 0; i < data.playlist.length; i++) {
+
+            $('#vid-list').append(
+                '<div id=' + data.playlist[i]['video_id'] + '_' + i + '_container class=" container vid-item">' +
+                '<i type="button" id="removeVideo_' + data.playlist[i]['video_id'] + '_' + i + '"  onclick="removeVideo(this.id)"  class="closeFont fa fa-times"></i>' +
+                '<i type="button" id=' + data.playlist[i]['video_id'] + ' onclick="loadVideoPlaylist(this.id)"  class=" playFont fa fa-play-circle-o"></i>' +
+                '<div  class="thumb">' +
+                '<img  src="https://img.youtube.com/vi/' + data.playlist[i]['video_id'] + '/0.jpg">' +
+                '</div>' +
+                '<div class="desc">' +
+                data.playlist[i]['title'] +
+                '</div>' +
+                '</div>');
+        }
 
 
 
@@ -358,8 +374,8 @@ WebsocketOnMessage = function(e) {
     }
     if (data.action === "addToPlaylist") {
         $('#vid-list').append(
-            '<div  class=" container vid-item">' +
-            '<i class="closeFont fa fa-times"></i>' +
+            '<div id=' + data.video[0] + '_' + data.index + '_container class=" container vid-item">' +
+            '<i type="button" id="removeVideo_' + data.video[0] + '_' + data.index + '"  onclick="removeVideo(this.id)"  class="closeFont fa fa-times"></i>' +
             '<i type="button" id=' + data.video[0] + ' onclick="loadVideoPlaylist(this.id)"  class=" playFont fa fa-play-circle-o"></i>' +
             '<div  class="thumb">' +
             '<img  src="https://img.youtube.com/vi/' + data.video[0] + '/0.jpg">' +
@@ -368,6 +384,11 @@ WebsocketOnMessage = function(e) {
             data.video[1] +
             '</div>' +
             '</div>');
+    }
+    if (data.action === "removeFromPlaylist") {
+
+        document.getElementById(data.removedVideo + "_" + data.removedVideoIndex + "_container").outerHTML = ""
+
     }
 
 
@@ -410,13 +431,17 @@ function loadVideo(videoID) {
     player.loadVideoById(videoID, 1, "default")
 }
 
-function loadVideoPlaylist(videoID) {
-    player.loadVideoById(videoID, 1, "default")
-    chatSocket.send(JSON.stringify({
+function removeVideo(videoID) {
 
-        'action': 'give_title',
-        'videoID': videoID
+    chatSocket.send(JSON.stringify({
+        'action': "removeVideoPlaylist",
+        'data': videoID
+
     }));
+}
+
+function loadVideoPlaylist(videoID) {
+    loadVideo(videoID)
     chatSocket.send(JSON.stringify({
         'action': "load_video",
         'data': videoID

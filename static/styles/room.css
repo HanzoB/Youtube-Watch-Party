@@ -121,7 +121,7 @@
  #chat-log {
      max-width: 95%;
      width: 100%;
-     height: 470px;
+     height: 485px;
      overflow-y: auto;
      word-wrap: break-word;
      margin-left: 10px;
@@ -208,7 +208,7 @@
  }
  
  .modal-backdrop {
-     background-color: #212529 !important;
+     background-color: #191919!important;
      opacity: 1.0 !important;
  }
  
