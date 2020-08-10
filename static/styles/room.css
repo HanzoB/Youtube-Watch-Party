@@ -340,7 +340,7 @@
      }
  }
  
- @media (max-width: 624px) {
+ @media (max-width: 780px) {
      #chat-log {
          min-height: 102px;
          height: 102px;

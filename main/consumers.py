@@ -18,12 +18,12 @@ class Room:
         self.room_id = ''
         self.room_host = ''
         self.room_users = []
-        self.current_video = ''
+        self.current_video = 'HLEn5MyXUfE'
         self.playlist = []
         self.current_time = 0
         self.confirmation = 0
         self.state = ""
-        self.index = 0
+        self.index = 1
 
     def curr_video(self, video):
         self.current_video = video
@@ -64,11 +64,15 @@ class Room:
 
     def remove_from_playlist(self, videoID, index):
         for i in range(len(self.playlist)):
-            if self.playlist[i]['video_id']  == videoID.split("_")[1] and str(i) == videoID.split("_")[2]:
+            if self.playlist[i]['video_id']  == videoID.split("_")[1] and str(self.playlist[i]['index']) == videoID.split("_")[2]:
+
                 del self.playlist[i]
                 print(self.playlist)
+                    
+                break
                 
-            break
+                
+            
            
 
     def room_info(self):
@@ -115,8 +119,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name,
         )
-        if room.isEmpty:
-            del rooms[self.room_group_name]
+       
         
 
        
@@ -134,7 +137,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             if len(room.room_users) == 0:
                 room.room_host = username
             room.add_user(username)
-            print("Connected: ")
             print(room.room_users)
             await self.send(text_data=json.dumps(room.__dict__))
             await self.channel_layer.group_send(
@@ -190,15 +192,34 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                         }
                     )
-                elif action =="addToPlaylist" or action =="removeVideoPlaylist":
-                    print("are u called 2?")
+                elif action =="addToPlaylist":
+                    print("added to playlist by: " + self.user.username)
+                    response = requests.get('http://noembed.com/embed?url=https://www.youtube.com/watch?v=' + data ) 
+                    title = response.json()['title']
+                    room.index += 1
+                    room.add_to_playlist({"video_id":data, "title":title, "index": room.index})
+                    await self.channel_layer.group_send(
+                        self.room_group_name,
+                        {
+                            'type': 'action',
+                            'action': action,
+                            'video_id': data,
+                            'title':title,
+                            'index': room.index,
+                            'username': self.user.username, 
+
+
+                        }
+                    )
+                elif  action =="removeVideoPlaylist":
+                    room.remove_from_playlist(data,data.split("_")[2])
                     await self.channel_layer.group_send(
                         self.room_group_name,
                         {
                             'type': 'action',
                             'action': action,
                             'data': data,
-                            'username': self.user.username,
+                            'username': self.user.username, 
 
 
                         }
@@ -261,6 +282,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 if self.user.username != username:
                     await self.send(text_data=json.dumps({
                         'action': action,
+                        'username' : username.split("_")[0],
                     }))
 
         elif action == "load_video":
@@ -271,30 +293,33 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 await self.send(text_data=json.dumps({
                 'action': action,
                 'data': data,
+                'username' : username.split("_")[0],
+            }))
+            else:
+                await self.send(text_data=json.dumps({
+                'action': action,
+                'username' : username.split("_")[0],
             }))
         elif action == "addToPlaylist":
             username = event['username']
-            video_id = event['data']
-            response = requests.get('http://noembed.com/embed?url=https://www.youtube.com/watch?v=' + video_id ) 
-
-            title = response.json()['title']
-            room.index = len(room.playlist)
-            room.add_to_playlist({"video_id":video_id, "title":title, "index": room.index})
+            video_id = event['video_id']
+            title = event['title']
+            index = event['index']
+            
             print(room.playlist)
             await self.send(text_data=json.dumps({
                 'action': action,
                 'video': [video_id,title],
-                "index": room.index,
+                "index": index,
                 'username':username,
             }))
             
         elif action =="removeVideoPlaylist":
             username = event['username']
-            videoID=event['data']
-            room.remove_from_playlist(videoID,videoID.split("_")[2])
             await self.send(text_data=json.dumps({
                     'action': "removeFromPlaylist",
-                    'playlist': room.playlist,
+                    'playlistupdate': room.playlist,
+                    'username':username,
                 }))
             
 
