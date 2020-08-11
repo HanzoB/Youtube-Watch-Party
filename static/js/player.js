@@ -16,7 +16,8 @@ var confirmation;
 let expectedRunTime = 0.0;
 let videoLastStartTime = 0.0;
 let chatSocket = {};
-var isSeeking = false;
+let isSeeking = false;
+
 
 
 
@@ -52,38 +53,26 @@ function onPlayerReady(event) {
     function CheckIfSeeked() {
         //console.log("Actual player time: " + player.getCurrentTime())
         //console.log("Calculated player time: " + (expectedRunTime))
-        if (IsPlaying === true) {
+        if (IsPlaying == true) {
             expectedRunTime += 0.5
 
         }
         console.log("Expected run time: " + expectedRunTime)
         console.log("Actual player time:: " + player.getCurrentTime())
 
-        if (isSeeking === false) {
-            if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 1) {
+        if (isSeeking == false) {
+            if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 3) {
                 chatSocket.send(JSON.stringify({
                     'action': "seek",
                     'data': player.getCurrentTime(),
                 }));
                 expectedRunTime = player.getCurrentTime()
-
             }
-
-
         } else {
             console.log("Currently Seeking")
         }
-
-
-
     }
     setInterval(CheckIfSeeked, 500)
-
-
-
-
-
-
 }
 
 
@@ -105,10 +94,6 @@ function onPlayerStateChange(event) {
         time = date.getTime() / 1000
         videoLastStartTime = time
 
-
-
-
-
     }
     if (event.data == YT.PlayerState.PAUSED) {
         IsPlaying = false
@@ -119,11 +104,6 @@ function onPlayerStateChange(event) {
         end = new Date()
         expectedRunTime += (end.getTime() / 1000) - videoLastStartTime
         videoLastStartTime = end.getTime() / 1000
-
-        //console.log(expectedRunTime)
-
-
-
 
     }
 
@@ -144,6 +124,7 @@ function YouTubeGetID(url) {
     }
     return ID;
 }
+
 $("#loadvideo").on("click", function() {
     url = $("#searchbox").val().match(/(\?|&)v=([^&#]+)/)
     video_id = YouTubeGetID(url)
@@ -201,7 +182,7 @@ $("#joinRoom").on("click", function() {
     if (userName != "") {
         $('#exampleModal').modal('hide');
         chatSocket = new WebSocket(
-            'wss://' +
+            'ws://' +
             window.location.host +
             '/ws/room/' +
             room_name
@@ -211,12 +192,12 @@ $("#joinRoom").on("click", function() {
 
         chatSocket.onopen = function(e) {
             chatSocket.send(JSON.stringify({
-                'username': userName
+                'username': userName,
+                "info": "username"
             }));
         };
         console.log(chatSocket)
     }
-    //document.querySelector('#searchbox').value = ""
 
 
 });
@@ -225,50 +206,142 @@ $("#joinRoom").on("click", function() {
 
 WebsocketOnMessage = function(e) {
     const data = JSON.parse(e.data);
-    if (playerReady) {
-        if (data.seekTo) {
-            if (data.playerstate === "play") {
+
+    switch (data.action) {
+        case 'pause':
+            if (IsPlaying === true) {
+                player.pauseVideo()
+            }
+            break
+        case "removeFromPlaylist":
+            document.getElementById('vid-list').innerHTML = ""
+            playlistUpdater(data.playlistupdate)
+
+            break
+        case 'load_video':
+            if (data.data) {
+                loadVideo(data.data)
                 setTimeout(function() {
-                    player.seekTo(data.seekTo - 0.8, true)
-                    player.playVideo()
-                }, 800);
-
-
-
-            } else if (data.playerstate === "pause") {
-                setTimeout(function() {
-                    console.log("seeking, player ready. time is : " + data.seekTo)
-                    player.seekTo(data.seekTo - 0.8, true)
-                    player.pauseVideo()
-                    IsPlaying = false
-                }, 800);
-
-
+                    player.seekTo(0, true)
+                }, 500)
 
             }
 
-        }
-    } else {
-        if (data.seekTo) {
-            seektime = data.seekTo
-        }
+            document.querySelector('#chat-log').innerHTML +=
+                '<li style="font-family: italic; padding-top:20px; font-size: 9px; list-style-type: none;">' + escapeHtml(data.username) + ' loaded a video.' + '</li>'
+            updateScroll()
 
+            break
+        case 'play':
+            if (IsPlaying === false) {
+                player.playVideo()
+            }
+
+            break
+        case 'seek':
+            if (data.current_time) {
+                console.log("called" + data.current_time)
+                console.log(data.current_time)
+
+                isSeeking = true
+                player.seekTo(data.current_time, true)
+
+
+                function waitseek() {
+                    if (data.current_time == player.getCurrentTime()) {
+                        isSeeking = false
+                        console.log("finished seeking")
+                        clearInterval(CheckingSeek)
+                        expectedRunTime = data.current_time
+                        date = new Date()
+                        time = date.getTime() / 1000
+                        videoLastStartTime = time
+                    }
+
+                }
+
+                CheckingSeek = setInterval(waitseek, 1)
+
+            }
+            break
+        case 'give_time':
+            console.log("give_time")
+            chatSocket.send(JSON.stringify({
+                'new_user_time': player.getCurrentTime()
+            }));
+            break
+        case 'addToPlaylist':
+            $('#vid-list').append(
+                '<div id=' + data.video[0] + '_' + data.index + '_container class=" container vid-item">' +
+                '<i type="button" id="removeVideo_' + data.video[0] + '_' + data.index + '"  onclick="removeVideo(this.id)"  class="closeFont fa fa-times"></i>' +
+                '<i type="button" id=' + data.video[0] + ' onclick="loadVideoPlaylist(this.id)"  class=" playFont fa fa-play-circle-o"></i>' +
+                '<div  class="thumb">' +
+                '<img  src="https://img.youtube.com/vi/' + data.video[0] + '/0.jpg">' +
+                '</div>' +
+                '<div class="desc">' +
+                escapeHtml(data.video[1]) +
+                '</div>' +
+                '</div>');
+
+            break
     }
+    switch (data.info) {
+        case "new_user_details":
+            if (playerReady) {
+                if (data.playerstate === "play") {
+                    setTimeout(function() {
+                        player.seekTo(data.seekTo - 0.8, true)
+                        player.playVideo()
+                    }, 800);
 
-    if (data.room_users) {
-        console.log("roomusers")
-        if (document.getElementById('roomUsers').innerHTML.value != "") {
-            document.getElementById('roomUsers').innerHTML = "";
-        }
-
-        $("#roomUsers").append(" " + data.room_users.length)
 
 
-    }
-    if (data.action === "removeFromPlaylist") {
-        document.getElementById('vid-list').innerHTML = ""
-        playlistUpdater(data.playlistupdate)
+                } else if (data.playerstate === "pause") {
+                    player.pauseVideo()
+                    setTimeout(function() {
+                        console.log("seeking, player ready. time is : " + data.seekTo)
+                        player.seekTo(data.seekTo - 0.8, true)
+                        IsPlaying = false
+                    }, 800);
 
+
+
+                }
+
+
+            } else {
+
+                seektime = data.seekTo
+
+            }
+            break
+
+        case "room_users":
+            console.log("roomusers")
+            if (document.getElementById('roomUsers').innerHTML.value != "") {
+                document.getElementById('roomUsers').innerHTML = "";
+            }
+
+            $("#roomUsers").append(" " + data.room_users.length)
+
+
+            break
+        case "new_user":
+            document.querySelector('#chat-log').innerHTML +=
+                '<li style="font-family: italic; padding-top:20px; font-size: 9px; list-style-type: none;">' + escapeHtml(data.new_user) + ' joined the room.' + '</li>'
+
+            updateScroll()
+            break
+        case "user_message":
+            document.querySelector('#chat-log').innerHTML +=
+                '<li id="chat-msg">' +
+                '<li style="font-family: italic; font-size: 13px; list-style-type: none;">' + escapeHtml(data.username) + ': </li>' +
+                escapeHtml(data.message) +
+                '</li>'
+
+
+            updateScroll()
+            break
 
     }
     if (data.playlist) {
@@ -279,50 +352,6 @@ WebsocketOnMessage = function(e) {
 
 
     }
-    if (data.message) {
-        document.querySelector('#chat-log').innerHTML +=
-            '<li id="chat-msg">' +
-            '<li style="font-family: italic; font-size: 13px; list-style-type: none;">' + escapeHtml(data.username) + ': </li>' +
-            escapeHtml(data.message) +
-            '</li>'
-
-
-        updateScroll()
-    }
-    if (data.new_user) {
-        document.querySelector('#chat-log').innerHTML +=
-            '<li style="font-family: italic; padding-top:20px; font-size: 9px; list-style-type: none;">' + escapeHtml(data.new_user) + ' joined the room.' + '</li>'
-
-        updateScroll()
-
-    }
-    if (data.action === 'pause') {
-
-        if (IsPlaying === true) {
-            //document.querySelector('#chat-log').innerHTML +=
-            // '<li style="font-family: italic; padding-top:20px; font-size: 9px; list-style-type: none;">' + data.username + ' paused the video.' + '</li>'
-            // updateScroll()
-            player.pauseVideo()
-        }
-
-
-
-
-    };
-    if (data.action === 'load_video') {
-        if (data.data) {
-            loadVideo(data.data)
-            setTimeout(function() {
-                player.seekTo(0, true)
-            }, 500)
-
-        }
-
-        document.querySelector('#chat-log').innerHTML +=
-            '<li style="font-family: italic; padding-top:20px; font-size: 9px; list-style-type: none;">' + escapeHtml(data.username) + ' loaded a video.' + '</li>'
-        updateScroll()
-    };
-
     if (data.current_video) {
         if (playerReady) {
             loadVideo(data.current_video)
@@ -332,67 +361,6 @@ WebsocketOnMessage = function(e) {
 
         }
     };
-    if (data.action === 'play') {
-
-        if (IsPlaying === false) {
-            // document.querySelector('#chat-log').innerHTML +=
-            // '<li style="font-family: italic; padding-top:20px; font-size: 9px; list-style-type: none;">' + data.username + ' played the video.' + '</li>'
-            // updateScroll()
-            player.playVideo()
-        }
-    }
-    if (data.action === 'seek') {
-        if (data.current_time) {
-            console.log("called" + data.current_time)
-            console.log(data.current_time)
-
-            isSeeking = true
-            player.seekTo(data.current_time, true)
-
-
-            function waitseek() {
-                if (data.current_time == player.getCurrentTime()) {
-                    isSeeking = false
-                    console.log("finished seeking")
-                    clearInterval(CheckingSeek)
-                    expectedRunTime = data.current_time
-                    date = new Date()
-                    time = date.getTime() / 1000
-                    videoLastStartTime = time
-                }
-
-            }
-
-            CheckingSeek = setInterval(waitseek, 1)
-
-        } else {
-
-        }
-    };
-    if (data.action === "give_time") {
-        console.log("give_time")
-        chatSocket.send(JSON.stringify({
-            'new_user_time': player.getCurrentTime()
-        }));
-
-
-    }
-    if (data.action === "addToPlaylist") {
-        $('#vid-list').append(
-            '<div id=' + data.video[0] + '_' + data.index + '_container class=" container vid-item">' +
-            '<i type="button" id="removeVideo_' + data.video[0] + '_' + data.index + '"  onclick="removeVideo(this.id)"  class="closeFont fa fa-times"></i>' +
-            '<i type="button" id=' + data.video[0] + ' onclick="loadVideoPlaylist(this.id)"  class=" playFont fa fa-play-circle-o"></i>' +
-            '<div  class="thumb">' +
-            '<img  src="https://img.youtube.com/vi/' + data.video[0] + '/0.jpg">' +
-            '</div>' +
-            '<div class="desc">' +
-            escapeHtml(data.video[1]) +
-            '</div>' +
-            '</div>');
-    }
-
-
-
 };
 
 
@@ -422,7 +390,6 @@ document.querySelector('#chat-message-input').onkeyup = function(e) {
 
 
 function updateScroll() {
-
     var element = document.getElementById("chat-log");
     element.scrollTop = element.scrollHeight;
 
@@ -433,7 +400,6 @@ function loadVideo(videoID) {
 }
 
 function removeVideo(videoID) {
-
     chatSocket.send(JSON.stringify({
         'action': "removeVideoPlaylist",
         'data': videoID
@@ -463,7 +429,7 @@ function playlistUpdater(playlist) {
             '<img  src="https://img.youtube.com/vi/' + playlist[i]['video_id'] + '/0.jpg">' +
             '</div>' +
             '<div class="desc">' +
-            playlist[i]['title'] +
+            escapeHtml(playlist[i]['title']) +
             '</div>' +
             '</div>');
     }
@@ -473,11 +439,15 @@ function playlistUpdater(playlist) {
 
 
 $(document).ready(function() {
+
     $(".arrow-right").bind("click", function(event) {
+
         event.preventDefault();
         $(".vid-list-container").stop().animate({
             scrollLeft: "+=148"
         }, 750);
+
+
     });
     $(".arrow-left").bind("click", function(event) {
         event.preventDefault();
