@@ -13,7 +13,7 @@ pip install Django==3.0.7
 <br>
 
 ```bash
-sudo apt-get install python3.6
+sudo apt-get install python3
 ```
 <br>
 
