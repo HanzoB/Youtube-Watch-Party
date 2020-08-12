@@ -11,7 +11,8 @@ pip install Django==3.0.7
 ```bash
 pip install channels-redis
 ```
-<br>
+
+
 ## Running the server locally
 
 manage.py runserver 0.0.0.0:8000
