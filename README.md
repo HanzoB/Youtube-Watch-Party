@@ -20,7 +20,7 @@ sudo apt-get install python3.6
 ```bash
 pip install channels-redis
 ```
-<br>
+
 
 ## Running the server 
 ```bash
