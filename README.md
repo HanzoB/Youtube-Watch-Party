@@ -1,6 +1,6 @@
 ## Youtube-Watch-Party
 
-This is a youtube video syncing app built on python and django framework. I plan to add support for more players in the future
+A youtube video syncing app built on python and django framework.
 
 ## Installation
 
