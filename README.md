@@ -1,4 +1,4 @@
-## Youtube-Watch-Party
+# Youtube-Watch-Party
 
 A youtube video syncing app built on python and django framework.
 
