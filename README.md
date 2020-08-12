@@ -11,11 +11,14 @@ A youtube video syncing app built on python and django framework.
 pip install Django==3.0.7
 ```
 <br>
-
+```bash
+sudo apt-get install python3.6
+```
+<br>
 ```bash
 pip install channels-redis
 ```
-
+<br>
 
 ## Running the server 
 ```bash
