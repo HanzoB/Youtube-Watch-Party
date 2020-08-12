@@ -70,7 +70,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             pass
              
         async def setUserName(text_data_json):
-            username = self.user.username = text_data_json['username'] + "_" + str(
+            username = self.user.username = text_data_json['username'] + "%^%^%^#%^" + str(
                 random.randint(0, 1000000))
             if len(room.room_users) == 0:
                 room.room_host = username
@@ -135,7 +135,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     )
                     
         async def removeFromPlaylistReceive(text_data_json):
-                    room.remove_from_playlist(data,data.split("_")[2])
+                    print("removed from playlist:" + data,data.split("*")[-1])
+                    room.remove_from_playlist(data,data.split("*")[-1])
                     await self.channel_layer.group_send(
                         self.room_group_name,
                         {
@@ -211,7 +212,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if len(message) > 0:
             await self.send(text_data=json.dumps({
             'message': message,
-            "username": username.split("_")[0],
+            "username": username.split("%^%^%^#%^")[0],
             'info': "user_message"
 
         }))
@@ -229,13 +230,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if self.user.username != room.room_users[-1]:
             await self.send(text_data=json.dumps({
-                'new_user': room.room_users[-1].split("_")[0],
+                'new_user': room.room_users[-1].split("%^%^%^#%^")[0],
                 'info': "new_user", }))
 
     async def notifyUserDisconnect(self,event):
         user  = event['user_disconnect']
         await self.send(text_data=json.dumps({
-                'disconnected_user': user.split("_")[0],
+                'disconnected_user': user.split("%^%^%^#%^")[0],
                 'info': "disconnected_user", }))
 
 
@@ -255,7 +256,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 if self.user.username != username:
                     await self.send(text_data=json.dumps({
                     'action': action,
-                    'username' : username.split("_")[0],
+                    'username' : username.split("%^%^%^#%^")[0],
                     }))
 
             
@@ -295,12 +296,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 await self.send(text_data=json.dumps({
                 'action': action,
                 'data': data,
-                'username' : username.split("_")[0],
+                'username' : username.split("%^%^%^#%^")[0],
             }))
         else:
                 await self.send(text_data=json.dumps({
                 'action': action,
-                'username' : username.split("_")[0],
+                'username' : username.split("%^%^%^#%^")[0],
             }))
 
     async def usersCountSend(self,event):

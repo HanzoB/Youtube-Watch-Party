@@ -49,8 +49,9 @@ class Room:
         print("append")
 
     def remove_from_playlist(self, videoID, index):
+        print("the index is + " + index)
         for i in range(len(self.playlist)):
-            if self.playlist[i]['video_id']  == videoID.split("_")[1] and str(self.playlist[i]['index']) == videoID.split("_")[2]:
+            if self.playlist[i]['video_id']  == videoID.split("*")[1] and str(self.playlist[i]['index']) == index:
 
                 del self.playlist[i]
                 print(self.playlist)

@@ -222,7 +222,7 @@ WebsocketOnMessage = function(e) {
             }
 
             document.querySelector('#chat-log').innerHTML +=
-                '<li style="font-family: italic; padding-top:20px; font-size: 9px; list-style-type: none;">' + escapeHtml(data.username) + ' loaded a video.' + '</li>'
+                '<li style="padding-top:10px; font-size: 12px; list-style-type: none; color:lightblue;">' + escapeHtml(data.username) + ' loaded a video.' + '</li>'
             updateScroll()
 
             break
@@ -275,7 +275,7 @@ WebsocketOnMessage = function(e) {
         case 'addToPlaylist':
             $('#vid-list').append(
                 '<div id=' + data.video[0] + '_' + data.index + '_container class=" container vid-item">' +
-                '<i type="button" id="removeVideo_' + data.video[0] + '_' + data.index + '"  onclick="removeVideo(this.id)"  class="closeFont fa fa-times"></i>' +
+                '<i type="button" id="removeVideo*' + data.video[0] + '*' + data.index + '"  onclick="removeVideo(this.id)"  class="closeFont fa fa-times"></i>' +
                 '<i type="button" id=' + data.video[0] + ' onclick="loadVideoPlaylist(this.id)"  class=" playFont fa fa-play-circle-o"></i>' +
                 '<div  class="thumb">' +
                 '<img  src="https://img.youtube.com/vi/' + data.video[0] + '/0.jpg">' +
@@ -435,7 +435,7 @@ function playlistUpdater(playlist) {
 
         $('#vid-list').append(
             '<div id=' + playlist[i]['video_id'] + '_' + playlist[i]['index'] + '_container class=" container vid-item">' +
-            '<i type="button" id="removeVideo_' + playlist[i]['video_id'] + '_' + playlist[i]['index'] + '"  onclick="removeVideo(this.id)"  class="closeFont fa fa-times"></i>' +
+            '<i type="button" id="removeVideo*' + playlist[i]['video_id'] + '*' + playlist[i]['index'] + '"  onclick="removeVideo(this.id)"  class="closeFont fa fa-times"></i>' +
             '<i type="button" id=' + playlist[i]['video_id'] + ' onclick="loadVideoPlaylist(this.id)"  class=" playFont fa fa-play-circle-o"></i>' +
             '<div  class="thumb">' +
             '<img  src="https://img.youtube.com/vi/' + playlist[i]['video_id'] + '/0.jpg">' +
