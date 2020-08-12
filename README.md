@@ -2,7 +2,7 @@
 
 A youtube video syncing app built on python and django framework.
 
-## Installation
+## Dependencies
 
 [Redis](https://github.com/redis/redis)
 ```bash
