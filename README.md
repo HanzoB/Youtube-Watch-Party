@@ -1,8 +1,8 @@
 ## Youtube-Watch-Party
 
-<br>
+This is a youtube video syncing app built on python and django framework. I plan to add support for more players in the future
 
-## Dependencies
+## Installation
 
 [Redis](https://github.com/redis/redis)
 ```bash
