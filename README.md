@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-[Redis](redis.io)
+[Redis](https://github.com/redis/redis)
 ```bash
 pip install Django==3.0.7
 ```
@@ -13,6 +13,7 @@ pip install channels-redis
 ```
 <br>
 ## Running the server locally
+
 manage.py runserver 0.0.0.0:8000
 
 ## Description
