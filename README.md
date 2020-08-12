@@ -13,7 +13,7 @@ pip install channels-redis
 ```
 
 
-## Running the server locally
+## Running the server 
 
 manage.py runserver 0.0.0.0:8000
 
