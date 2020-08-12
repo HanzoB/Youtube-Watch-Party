@@ -384,7 +384,7 @@ chatSocket.onclose = function(e) {
     console.error('Chat socket closed unexpectedly');
 };
 
-document.querySelector('#chat-message-input').focus();
+
 document.querySelector('#chat-message-input').onkeyup = function(e) {
     const messageInput = document.querySelector('#chat-message-input');
     const message = messageInput.value;
