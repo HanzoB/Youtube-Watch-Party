@@ -1,10 +1,18 @@
-Youtube-Watch-Party
-Dependencies
-Redis
+## Youtube-Watch-Party
 
+## Dependencies
+
+[Redis](redis.io)
+```bash
 pip install Django==3.0.7
+```
+<br>
+
+```bash
 pip install channels-redis
-Running the server locally
+```
+<br>
+## Running the server locally
 manage.py runserver 0.0.0.0:8000
 
 ## Description
@@ -17,6 +25,6 @@ This django app utilizes websockets for syncing user inputted youtube videos. It
   <li>Universal room control</li>
   
 
-
+<br>
 
 [Live demo](syncpin.net)
