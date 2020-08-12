@@ -31,4 +31,4 @@ This django app utilizes websockets for syncing user inputted youtube videos. It
 
 <br>
 
-[Live demo](syncpin.net)
+[Live demo](https://www.syncpin.net)
