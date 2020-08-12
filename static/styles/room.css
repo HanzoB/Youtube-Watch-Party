@@ -340,6 +340,18 @@ marquee {
     }
 }
 
+#roomUsers {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+    background: #fff;
+    border: 2px solid #666;
+    color: lightblue;
+    text-align: center;
+    font: 32px Arial, sans-serif;
+}
+
 
 /* Extra small devices (portrait phones, less than 576px)*/
 

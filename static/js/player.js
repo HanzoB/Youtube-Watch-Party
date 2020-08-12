@@ -17,6 +17,7 @@ let expectedRunTime = 0.0;
 let videoLastStartTime = 0.0;
 let chatSocket = {};
 let isSeeking = false;
+let playListItems = 0;
 
 
 
@@ -26,7 +27,7 @@ function onYouTubeIframeAPIReady() {
         playerVars: {
             'autoplay': 0,
             'controls': 1,
-            'rel:': 0
+            'rel:': 1
         },
         events: {
             'onReady': onPlayerReady,
@@ -51,34 +52,25 @@ function onPlayerReady(event) {
 
 
     function CheckIfSeeked() {
-        //console.log("Actual player time: " + player.getCurrentTime())
-        //console.log("Calculated player time: " + (expectedRunTime))
         if (IsPlaying == true) {
             expectedRunTime += 0.5
 
         }
-        console.log("Expected run time: " + expectedRunTime)
-        console.log("Actual player time:: " + player.getCurrentTime())
+        if (isSeeking == false && Math.abs(player.getCurrentTime() - (expectedRunTime)) > 3) {
 
-        if (isSeeking == false) {
-            if (Math.abs(player.getCurrentTime() - (expectedRunTime)) > 3) {
-                chatSocket.send(JSON.stringify({
-                    'action': "seek",
-                    'data': player.getCurrentTime(),
-                }));
-                expectedRunTime = player.getCurrentTime()
-            }
-        } else {
-            console.log("Currently Seeking")
+            chatSocket.send(JSON.stringify({
+                'action': "seek",
+                'data': player.getCurrentTime(),
+                'info': "seek"
+            }));
+            expectedRunTime = player.getCurrentTime()
+
         }
     }
     setInterval(CheckIfSeeked, 500)
 }
 
 
-// 5. The API calls this function when the player's state changes.
-//    The function indicates that when playing a video (state=1),
-//    the player should play for six seconds and then stop.
 function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.ENDED) {
 
@@ -88,7 +80,7 @@ function onPlayerStateChange(event) {
             //confirmation  += 1
         chatSocket.send(JSON.stringify({
             'action': "play",
-            // 'confirmation': confirmation ,
+            'info': "play",
         }));
         date = new Date()
         time = date.getTime() / 1000
@@ -99,7 +91,7 @@ function onPlayerStateChange(event) {
         IsPlaying = false
         chatSocket.send(JSON.stringify({
             'action': "pause",
-            'confirmation': confirmation,
+            'info': "pause",
         }));
         end = new Date()
         expectedRunTime += (end.getTime() / 1000) - videoLastStartTime
@@ -133,7 +125,8 @@ $("#loadvideo").on("click", function() {
     player.stopVideo()
     chatSocket.send(JSON.stringify({
         'action': "load_video",
-        'data': video_id
+        'data': video_id,
+        'info': 'loadVideo'
     }));
     setTimeout(function() {
         player.seekTo(0, true)
@@ -146,7 +139,8 @@ $("#AddToPlaylist").on("click", function() {
     document.querySelector('#searchbox').value = ""
     chatSocket.send(JSON.stringify({
         'action': "addToPlaylist",
-        'data': video_id
+        'data': video_id,
+        'info': 'addToPlaylist'
     }));
 });
 
@@ -266,9 +260,17 @@ WebsocketOnMessage = function(e) {
             break
         case 'give_time':
             console.log("give_time")
+            console.log("the time sent is " + player.getCurrentTime())
+            if (player.getCurrentTime() === undefined) {
+                newUserTime = 0
+            } else {
+                newUserTime = player.getCurrentTime()
+            }
             chatSocket.send(JSON.stringify({
-                'new_user_time': player.getCurrentTime()
+                'new_user_time': newUserTime,
+                "info": "new_user_time"
             }));
+
             break
         case 'addToPlaylist':
             $('#vid-list').append(
@@ -322,20 +324,26 @@ WebsocketOnMessage = function(e) {
                 document.getElementById('roomUsers').innerHTML = "";
             }
 
-            $("#roomUsers").append(" " + data.room_users.length)
+            $("#roomUsers").append("   " + data.room_users.length)
 
 
             break
         case "new_user":
             document.querySelector('#chat-log').innerHTML +=
-                '<li style="font-family: italic; padding-top:20px; font-size: 9px; list-style-type: none;">' + escapeHtml(data.new_user) + ' joined the room.' + '</li>'
+                '<li style="padding-top:10px; font-size: 12px; list-style-type: none; color:lightblue;">' + escapeHtml(data.new_user) + ' joined the room.' + '</li>'
+
+            updateScroll()
+            break
+        case "disconnected_user":
+            document.querySelector('#chat-log').innerHTML +=
+                '<li style=" padding-top:10px; font-size: 12px; list-style-type: none; color:red;">' + escapeHtml(data.disconnected_user) + ' left the room.' + '</li>'
 
             updateScroll()
             break
         case "user_message":
             document.querySelector('#chat-log').innerHTML +=
                 '<li id="chat-msg">' +
-                '<li style="font-family: italic; font-size: 13px; list-style-type: none;">' + escapeHtml(data.username) + ': </li>' +
+                '<li style="Baskerville: ; font-size: 13px; list-style-type: none;">' + escapeHtml(data.username) + ': </li>' +
                 escapeHtml(data.message) +
                 '</li>'
 
@@ -378,13 +386,15 @@ chatSocket.onclose = function(e) {
 
 document.querySelector('#chat-message-input').focus();
 document.querySelector('#chat-message-input').onkeyup = function(e) {
+    const messageInput = document.querySelector('#chat-message-input');
+    const message = messageInput.value;
     if (e.keyCode === 13) { // enter, return
-        const messageInputDom = document.querySelector('#chat-message-input');
-        const message = messageInputDom.value;
+
         chatSocket.send(JSON.stringify({
-            'message': message
+            'message': message,
+            'info': 'message'
         }));
-        messageInputDom.value = '';
+        messageInput.value = '';
     }
 };
 
@@ -402,7 +412,8 @@ function loadVideo(videoID) {
 function removeVideo(videoID) {
     chatSocket.send(JSON.stringify({
         'action': "removeVideoPlaylist",
-        'data': videoID
+        'data': videoID,
+        'info': 'removeFromPlaylist'
 
     }));
 }
@@ -411,7 +422,8 @@ function loadVideoPlaylist(videoID) {
     loadVideo(videoID)
     chatSocket.send(JSON.stringify({
         'action': "load_video",
-        'data': videoID
+        'data': videoID,
+        'info': 'loadVideo'
     }));
 }
 

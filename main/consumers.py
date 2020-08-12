@@ -4,6 +4,7 @@ import random
 import datetime
 import requests
 from .room import Room
+import asyncio
 
 
 # {roomid:{'host':'first user in room';,room_users:[],'current_video': '' ,playlist:[]}}
@@ -12,7 +13,6 @@ rooms = {}
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
-
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room']
         self.room_group_name = 'room_%s' % self.room_name
@@ -43,7 +43,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.room_group_name,
                 {
-                    'type': 'usersCount',
+                    'type': 'notifyUserDisconnect',
+                    'user_disconnect': self.user.username,})
+        await self.channel_layer.group_send(
+            self.room_group_name,
+                {
+                    'type': 'usersCountSend',
                     'action': "users_count",})
         await self.send(text_data=json.dumps(room.__dict__))
         await self.channel_layer.group_discard(
@@ -51,17 +56,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name,
         )
        
-        
+    
+    
 
+    #received data from websocket user 
     async def receive(self, text_data):
-        username = self.user.username.split("_")[0]
         room = rooms[self.room_group_name]
         text_data_json = json.loads(text_data)
-    
-        if 'username' in text_data_json:
+        try:
+            data = text_data_json['data']
+            action = text_data_json['action']
+        except KeyError:
+            pass
+             
+        async def setUserName(text_data_json):
             username = self.user.username = text_data_json['username'] + "_" + str(
                 random.randint(0, 1000000))
-            room = rooms[self.room_group_name]
             if len(room.room_users) == 0:
                 room.room_host = username
             room.add_user(username)
@@ -70,56 +80,42 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(
             self.room_group_name,
             {
-                'type': 'giveTime',
+                'type': 'giveTimeSend',
                 'action': "give_time",
 
             })
             await self.channel_layer.group_send(
             self.room_group_name,
                 {
-                    'type': 'usersCount',
+                    'type': 'usersCountSend',
                     'action': "users_count",}) 
+        
+        
 
-        elif 'message' in text_data_json:
+        async def messageReceive(text_data_json):
             message = text_data_json['message']
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
-                    'type': 'chat',
+                    'type': 'messageSend',
                     'message': message,
-                    "username": username,
+                    "username": self.user.username,
                 }
             )
-        elif 'new_user_time' in text_data_json:
+
+        
+
+        async def NewUserTimeReceive(text_data_json):
             new_user_time = text_data_json['new_user_time']
-            print(str(new_user_time) + " is the time received")
             await self.channel_layer.group_send(
                 self.room_group_name,
                 { 
-                    'type': "NewUserTime",
+                    'type': "newUserTimeSend",
                     'new_user_time': new_user_time,
                 }
             )
-        elif 'action' in text_data_json:
-            action = text_data_json['action']
-            room = rooms[self.room_group_name]
-            if 'data' in text_data_json:
-                data = text_data_json['data']
-                if action == "play" or action == "pause" or action == "seek":
-                    if action == "play" or action == "pause":
-                        room.SetPlayerState(action)
-                    await self.channel_layer.group_send(
-                        self.room_group_name,
-                        {
-                            'type': 'playerStateChange',
-                            'action': action,
-                            'data': data,
-                            'username': self.user.username,
 
-                        }
-                    )
-                elif action =="addToPlaylist":
-                    print("added to playlist by: " + self.user.username)
+        async def addToPlaylistReceive(text_data_json):
                     response = requests.get('http://noembed.com/embed?url=https://www.youtube.com/watch?v=' + data ) 
                     title = response.json()['title']
                     room.index += 1
@@ -127,7 +123,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     await self.channel_layer.group_send(
                         self.room_group_name,
                         {
-                            'type': 'addToPlaylist',
+                            'type': 'addToPlaylistSend',
                             'action': action,
                             'video_id': data,
                             'title':title,
@@ -137,12 +133,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                         }
                     )
-                elif  action =="removeVideoPlaylist":
+                    
+        async def removeFromPlaylistReceive(text_data_json):
                     room.remove_from_playlist(data,data.split("_")[2])
                     await self.channel_layer.group_send(
                         self.room_group_name,
                         {
-                            'type': 'removeFromPlaylist',
+                            'type': 'removeFromPlaylistSend',
                             'action': action,
                             'data': data,
                             'username': self.user.username, 
@@ -150,54 +147,79 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                         }
                     )
-                else:
-                    room.curr_video(data)
+        async def loadVideoReceive(text_data_json):
+            action = text_data_json['action']
+            data = text_data_json['data']
+            room.curr_video(data)
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'loadVideoSend',
+                    'action': action,
+                    'data': data,
+                     'username': self.user.username,
+
+                })
+
+        async def playerStateChangeReceive(text_data_json):
+            action = text_data_json['action']
+            room = rooms[self.room_group_name]
+            if action == "seek":
+                    data = text_data_json['data']
                     await self.channel_layer.group_send(
                         self.room_group_name,
                         {
-                            'type': 'loadVideo',
+                            'type': 'playerStateChangeSend',
                             'action': action,
                             'data': data,
                             'username': self.user.username,
 
                         }
-                    )
-
+                    )                
             else:
                 if action == "pause" or action == "play":
                     room.SetPlayerState(action)
                     await self.channel_layer.group_send(
                         self.room_group_name,
                         {
-                            'type': 'playerStateChange',
+                            'type': 'playerStateChangeSend',
                             'action': action,
                             'username': self.user.username,
 
 
                         }
                     )
+
+        
+        received = {"username" : setUserName, "message" : messageReceive, 
+        'new_user_time': NewUserTimeReceive,'addToPlaylist':addToPlaylistReceive,
+        'removeFromPlaylist':removeFromPlaylistReceive, 'loadVideo' : loadVideoReceive, 
+        'play':playerStateChangeReceive, 'pause':playerStateChangeReceive, "seek":playerStateChangeReceive}
+        await received.get(text_data_json['info'])(text_data_json) 
+ 
+    
                 
+               
 
-                
 
-    # Receive message from room group
 
-    async def chat(self, event):
+
+#Sending Received Websocket data to users
+    async def messageSend(self, event):
         message = event['message']
-        await self.send(text_data=json.dumps({
+        username = event["username"]
+        if len(message) > 0:
+            await self.send(text_data=json.dumps({
             'message': message,
-            "username": event["username"],
+            "username": username.split("_")[0],
             'info': "user_message"
 
         }))
 
 
-
-    async def NewUserTime(self, event):
-        new_user_time = event['new_user_time']
-
-        # Send message to WebSocket
+    async def newUserTimeSend(self, event):
         room = rooms[self.room_group_name]
+        new_user_time = event['new_user_time']
         if self.user.username == room.room_users[-1]:
             print("sending playlist")
             await self.send(text_data=json.dumps({
@@ -210,8 +232,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'new_user': room.room_users[-1].split("_")[0],
                 'info': "new_user", }))
 
+    async def notifyUserDisconnect(self,event):
+        user  = event['user_disconnect']
+        await self.send(text_data=json.dumps({
+                'disconnected_user': user.split("_")[0],
+                'info': "disconnected_user", }))
 
-    async def playerStateChange(self,event):
+
+
+    async def playerStateChangeSend(self,event):
         action = event["action"]
         username = event['username']
 
@@ -230,7 +259,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     }))
 
             
-    async def addToPlaylist(self,event):
+    async def addToPlaylistSend(self,event):
         room = rooms[self.room_group_name]
         username = event['username']
         video_id = event['video_id']
@@ -247,7 +276,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
 
 
-    async def removeFromPlaylist(self, event):
+    async def removeFromPlaylistSend(self, event):
         username = event['username']
         room = rooms[self.room_group_name]
         await self.send(text_data=json.dumps({
@@ -257,7 +286,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }))
 
 
-    async def loadVideo(self,event):
+    async def loadVideoSend(self,event):
         data = event['data']
         username = event['username']
         action = event['action']
@@ -274,19 +303,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'username' : username.split("_")[0],
             }))
 
-    async def usersCount(self,event):
+    async def usersCountSend(self,event):
         room = rooms[self.room_group_name]
         await self.send(text_data=json.dumps({
                 'room_users': room.room_users,
                 'info': "room_users",
             }))
 
-    async def giveTime(self,event):
+    async def giveTimeSend(self,event):
         room = rooms[self.room_group_name]
         if self.user.username == room.room_users[0]:
             await self.send(text_data=json.dumps({
                 'action': "give_time",
             }))
+
+    
 
 
 
