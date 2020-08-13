@@ -176,7 +176,7 @@ $("#joinRoom").on("click", function() {
     if (userName != "") {
         $('#exampleModal').modal('hide');
         chatSocket = new WebSocket(
-            'ws://' +
+            'wss://' +
             window.location.host +
             '/ws/room/' +
             room_name

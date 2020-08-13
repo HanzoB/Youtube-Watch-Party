@@ -2,7 +2,7 @@
 
 A youtube video syncing app built on python and django framework.
 <br><br>
-![Screenshot_57](https://user-images.githubusercontent.com/13599606/89975814-a4508b80-dc5e-11ea-96d5-4fed3cd67cf7.jpg)
+![syncpindisplay](https://user-images.githubusercontent.com/13599606/90090608-5c903980-dd1c-11ea-8cf1-0fa25291e339.jpg)
 
 ## Dependencies
 
