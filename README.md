@@ -1,4 +1,4 @@
-# Youtube-Watch-Party [SyncPin]
+# Youtube-Watch-Party
 
 A youtube video syncing app built on python and django framework.
 <br><br>
