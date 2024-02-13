@@ -18,10 +18,6 @@ pip install Django==3.0.7
 ```
 <br>
 
-```bash
-pip install channels-redis
-```
-
 
 ## Running the server 
 ```bash
